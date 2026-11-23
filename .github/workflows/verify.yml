@@ -1,4 +1,4 @@
-name: Verify Service Garden
+name: Verify ABA Track
 on:
   push:
     branches: [main]
