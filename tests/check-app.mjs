@@ -9,8 +9,8 @@ test('all embedded application scripts parse',()=>{
  for(const [i,block] of blocks.entries())assert.doesNotThrow(()=>new vm.Script(block[1],{filename:'inline-'+i+'.js'}));
 });
 test('single application version',()=>{
- assert.match(html,/<title>Service Garden — v0\.4<\/title>/);
- assert.match(html,/id="app-version"[^>]*>v0\.4/);
+ assert.match(html,/<title>Service Garden — v0\.4\.1<\/title>/);
+ assert.match(html,/id="app-version"[^>]*>v0\.4\.1/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
 test('management controls exist',()=>{
@@ -34,4 +34,13 @@ test('home screen metadata targets main application',()=>{
  assert.equal(m.id,'/service-garden/');
  assert.equal(m.short_name,'Service Garden');
  assert.equal(m.display,'standalone');
+});
+
+test('sync state labels and conflict decision UI',()=>{
+ for(const state of ['offline','checking','syncing','synced','error','conflict']) assert.match(html,new RegExp(state+":'"));
+ for(const id of ['garden-conflict-panel','export-local-conflict','export-cloud-dialog','keep-cloud-dialog','keep-local-dialog'])assert.ok(html.includes('id="'+id+'"'),id);
+ assert.match(html,/function gardenShowConflict\(/);
+ assert.match(html,/gardenShowConflict\(\);return;/);
+ assert.match(html,/gardenResolveConflict\(false\)/);
+ assert.match(html,/gardenResolveConflict\(true\)/);
 });

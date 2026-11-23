@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Service Garden — v0.4</title>
+<title>Service Garden — v0.4.1</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Service Garden">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -346,12 +346,13 @@ button{touch-action:manipulation}
 .client-heading .actions button{font-size:.85rem}
 @media(max-width:600px){.client-manage-dialog{padding:18px}.client-heading{flex-wrap:wrap}.client-heading .actions{width:100%}}
 @media(prefers-reduced-motion:reduce){.garden-achievement .garden-flower{animation:none}}
+.garden-conflict-panel{display:grid;gap:12px;border:1px solid #ddb7aa;border-left:4px solid #b64e44;background:#fff5f0;border-radius:14px;padding:14px}.garden-conflict-panel h3{margin:0;color:#963f38}.garden-conflict-panel p{margin:0}.garden-conflict-panel .actions button{flex:1 1 150px}@media(max-width:420px){.garden-conflict-panel{padding:11px}}
 </style>
 </head>
 <body>
 <button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><button id="manage-archived" class="nav-item">▤ Archived clients</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
 <header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
-<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.4">v0.4</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.4.1">v0.4.1</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
 <div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
 <details class="sync-preview-controls" hidden><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p></p></details><div id="conflict" hidden><p class="error">Both devices changed the same record. Sync has paused; neither copy has been overwritten.</p><div class="actions"><button id="export-cloud">Export cloud copy</button><button id="use-cloud">Use cloud copy</button><button id="use-local">Use this device’s copy</button></div><p class="muted">Choosing a copy replaces the entire tracker. Export both copies first if you need to combine changes.</p></div>
 </div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
@@ -377,7 +378,7 @@ button{touch-action:manipulation}
 </main>
 <dialog id="sync-dialog" aria-label="Private device synchronization">
 <div class="garden-sync-dialog">
-<h2>Private device sync <small class="app-version">v0.4</small></h2>
+<h2>Private device sync <small class="app-version">v0.4.1</small></h2>
 <p class="muted">Pair this browser with your private key. No email address or password is required. Once paired, changes sync automatically when online.</p>
 <p id="garden-beta-warning" class="garden-beta-warning"><strong>Sync verification underway.</strong> Use only fictional test records until Mac and iPhone pairing, synchronization, and revocation are verified.</p>
 <form id="sync-form" autocomplete="off">
@@ -385,6 +386,13 @@ button{touch-action:manipulation}
 <label>Private pairing key<input name="pairingKey" type="password" minlength="64" maxlength="64" pattern="[a-fA-F0-9]{64}" placeholder="64-character private key" autocomplete="off" autocapitalize="off" spellcheck="false" required></label>
 <div class="actions"><button class="primary" id="connect">Pair this device</button></div>
 </form>
+<section id="garden-conflict-panel" hidden aria-label="Resolve sync conflict">
+<h3>⚠️ Sync conflict: choose which version to keep</h3>
+<p class="muted">The cloud and this device contain changes that cannot safely be merged. Neither version has been overwritten. Download both copies first.</p>
+<div class="actions"><button type="button" id="export-local-conflict">Download this device's copy</button><button type="button" id="export-cloud-dialog">Download cloud copy</button></div>
+<div class="actions"><button type="button" id="keep-cloud-dialog">Keep cloud version</button><button type="button" id="keep-local-dialog">Keep this device's version</button></div>
+<p class="muted">The version you do not choose will be replaced. Local recovery backups will be retained.</p>
+</section>
 <section id="garden-device-panel" hidden>
 <h3>My devices</h3><p class="muted">These browsers can access your synchronized Service Garden. Revoking a device prevents future server access.</p>
 <div class="garden-device-list" id="garden-devices-list"></div>
@@ -788,12 +796,13 @@ function gardenSyncPaint(status, detail) {
  $('sync-progress').hidden = status!=='checking' && status!=='syncing';
  $('sync-demo-tag').hidden = true;
  $('conflict').hidden = !cloudConflict;
+ $('garden-conflict-panel').hidden = !cloudConflict;
  $('sync-now').disabled = syncBusy || !storageReady || !gardenWorkspace;
  $('sync-settings').textContent = 'Manage devices';
 }
 function updateSyncStatus() {
  if(!storageReady) return gardenSyncPaint('error','Local storage is unreadable. Use recovery before making changes.');
- if(cloudConflict) return gardenSyncPaint('conflict','Two devices changed the same record. Review both copies before replacing either one.');
+ if(cloudConflict) return gardenSyncPaint('conflict','Sync paused: two versions need your decision. Tap to review both versions.');
  if(!navigator.onLine) return gardenSyncPaint('offline', 'Offline. Local changes are safe on this device, but have not been synchronized.');
  if(syncStatusOverride) return gardenSyncPaint(syncStatusOverride,syncMessage);
  if(!gardenWorkspace) return gardenSyncPaint('offline','No device paired. Your data is saved on this browser only.');
@@ -804,6 +813,7 @@ function updateSyncStatus() {
  gardenSyncPaint('checking','Paired device. Checking its cloud copy.');
 }
 function queueSync(){clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(),850)}
+function gardenShowConflict(){updateSyncStatus();gardenSyncOpen();}
 async function gardenLoadClient() {
  if(gardenClient) return gardenClient;
  if(!gardenSdkPromise) gardenSdkPromise = new Promise((resolve,reject)=>{
@@ -855,13 +865,13 @@ async function syncNow(){
    const firstOverlap=!current.owner && (current.data.auth.length||current.data.logs.length) && cloud.revision>0 && !TrackerCore.equal(current.data,cloud.payload);
    const merged=TrackerCore.merge(current.base,current.data,cloud.payload);
    if(firstOverlap || merged.conflicts.length || !valid(merged.data)) {
-     cloudConflict=cloud;store=current;state=current.data;storageSnapshot=JSON.stringify(current);render();return;
+     cloudConflict=cloud;store=current;state=current.data;storageSnapshot=JSON.stringify(current);render();gardenShowConflict();return;
    }
    let revision=cloud.revision;
    if(!TrackerCore.equal(merged.data,cloud.payload)) {
      syncPhase='syncing'; updateSyncStatus();
      try{revision=await gardenWriteCloud(merged.data,revision)}catch(e){
-       if(/REVISION_CONFLICT|409/i.test(gardenSyncError(e))) {cloudConflict=await gardenReadCloud();render();return;}
+       if(/REVISION_CONFLICT|409/i.test(gardenSyncError(e))) {cloudConflict=await gardenReadCloud();render();gardenShowConflict();return;}
        throw e;
      }
    }
@@ -917,6 +927,7 @@ function gardenSyncOpen(){
   $('garden-device-name').value=/iPhone/i.test(navigator.userAgent)?(homeScreen?'iPhone Home Screen':'iPhone Safari'):/iPad/i.test(navigator.userAgent)?(homeScreen?'iPad Home Screen':'iPad Safari'):/Macintosh/i.test(navigator.userAgent)?'MacBook':'My Device';
  }
  if(!$('sync-dialog').open)$('sync-dialog').showModal();
+ $('garden-conflict-panel').hidden=!cloudConflict;
  if(gardenWorkspace)gardenDevices();
 }
 function initializeSync(){
@@ -951,6 +962,10 @@ function initializeSync(){
  $('garden-refresh-devices').onclick=gardenDevices;
  $('garden-check-updates').onclick=async()=>{await syncNow();await gardenDevices()};
  $('export-cloud').onclick=()=>{if(cloudConflict)downloadJSON(cloudConflict.payload,'service-garden-cloud-copy-'+day()+'.json')};
+ $('export-local-conflict').onclick=()=>{if(storageReady)downloadJSON(state,'service-garden-local-copy-'+day()+'.json')};
+ $('export-cloud-dialog').onclick=$('export-cloud').onclick;
+ $('keep-cloud-dialog').onclick=()=>gardenResolveConflict(false);
+ $('keep-local-dialog').onclick=()=>gardenResolveConflict(true);
  $('use-cloud').onclick=()=>gardenResolveConflict(false);
  $('use-local').onclick=()=>gardenResolveConflict(true);
  window.addEventListener('online',()=>{syncStatusOverride='checking';syncMessage='Reconnected. Checking cloud changes.';updateSyncStatus();syncStatusOverride='';syncMessage='';queueSync()});
