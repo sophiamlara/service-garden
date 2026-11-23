@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Service Garden — v0.4.3</title>
+<title>ABA Track — v0.4.4</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Service Garden">
+<meta name="apple-mobile-web-app-title" content="ABA Track">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f2ece2">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -420,12 +420,55 @@ button{touch-action:manipulation}
  .garden-diff-toggle{grid-column:1;justify-self:start}
  .garden-conflict-count{padding:8px}
 }
+
+/* ABA Track v0.4.4 — calmer, spacious conflict review with distinct steps. */
+#sync-dialog:has(#garden-conflict-panel:not([hidden])){width:min(95vw,670px);padding:clamp(17px,3vw,27px)}
+#sync-dialog:has(#garden-conflict-panel:not([hidden])) .garden-sync-dialog{gap:18px}
+#sync-dialog:has(#garden-conflict-panel:not([hidden])) .garden-sync-dialog>h2{font-size:1.26rem;letter-spacing:-.02em;padding-bottom:3px}
+#sync-dialog .garden-conflict-panel{display:flex;flex-direction:column;gap:0;padding:clamp(15px,2.5vw,24px);border-radius:18px;background:#fffdf9;border:1px solid #e4ded5}
+.garden-conflict-heading{gap:13px;align-items:flex-start;margin:0 0 20px}
+.garden-conflict-heading>span{margin-top:1px}
+.garden-conflict-heading h3{font-size:1.13rem;line-height:1.35;margin:0 0 7px}
+.garden-conflict-heading p{font-size:.86rem;line-height:1.5}
+.garden-conflict-counts{gap:13px;margin:0 0 25px}
+.garden-conflict-count{padding:15px 16px;gap:6px}
+.garden-conflict-count strong{font-size:.88rem}
+.garden-conflict-count span{font-size:.81rem;line-height:1.45}
+#garden-diff-heading{font-size:1rem;line-height:1.35;margin:0 0 8px}
+#garden-diff-heading + p.muted{margin:0 0 13px;line-height:1.5}
+.garden-conflict-diff{gap:11px;max-height:min(36vh,365px);margin-bottom:25px}
+.garden-diff-item>summary{padding:15px 16px;row-gap:8px}
+.garden-diff-table th,.garden-diff-table td{padding:12px 10px;line-height:1.45}
+.garden-conflict-backups{padding:18px 0;margin:0 0 21px;border-top:1px solid #e2dacf;border-bottom:1px solid #e2dacf}
+.garden-conflict-backups>summary{font-size:.91rem;line-height:1.4;padding:3px 0}
+.garden-conflict-backups p{margin:13px 0}
+.garden-conflict-buttons{gap:12px;margin-top:12px}
+.garden-conflict-decision{margin:0 0 16px;gap:12px}
+.garden-conflict-decision legend{font-size:1rem;padding:0 0 13px;line-height:1.35}
+#sync-dialog .garden-conflict-decision label{padding:16px 15px!important;min-height:79px;gap:14px!important}
+.garden-conflict-decision label strong{font-size:.95rem}
+.garden-conflict-decision label small{font-size:.83rem;line-height:1.5}
+.garden-conflict-impact{padding:14px 15px;margin:0 0 19px!important;line-height:1.55;font-size:.85rem;border-radius:12px}
+#sync-dialog .garden-conflict-ack{margin:0 0 17px;font-size:.87rem;line-height:1.5;gap:12px}
+#garden-apply-conflict{min-height:52px;margin:0 0 16px;font-size:.94rem}
+.garden-conflict-help{margin:0;padding-top:16px;border-top:1px solid #e9e1d6;font-size:.83rem;line-height:1.55}
+@media(max-width:480px){
+ #sync-dialog:has(#garden-conflict-panel:not([hidden])){width:min(97vw,670px);padding:15px}
+ #sync-dialog .garden-conflict-panel{padding:15px}
+ .garden-conflict-heading{margin-bottom:17px}
+ .garden-conflict-counts{margin-bottom:22px;gap:9px}
+ .garden-conflict-count{padding:11px 12px}
+ .garden-conflict-diff{margin-bottom:22px}
+ .garden-diff-item>summary{padding:13px 12px}
+ .garden-conflict-backups{margin-bottom:19px}
+ #sync-dialog .garden-conflict-decision label{padding:14px 12px!important}
+}
 </style>
 </head>
 <body>
-<button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><button id="manage-archived" class="nav-item">▤ Archived clients</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
+<button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>ABA Track<small>AUTHORIZATION & HOURS</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><button id="manage-archived" class="nav-item">▤ Archived clients</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
 <header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
-<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.4.3">v0.4.3</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.4.4">v0.4.4</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
 <div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
 <details class="sync-preview-controls" hidden><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p></p></details><div id="conflict" hidden><p class="error">Sync paused: versions differ. Open the Sync dialog to review changes before choosing.</p></div>
 </div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
@@ -451,7 +494,7 @@ button{touch-action:manipulation}
 </main>
 <dialog id="sync-dialog" aria-label="Private device synchronization">
 <div class="garden-sync-dialog">
-<h2>Private device sync <small class="app-version">v0.4.3</small></h2>
+<h2>Private device sync <small class="app-version">v0.4.4</small></h2>
 <p class="muted" id="garden-pair-intro">Pair this browser with your private key. No email address or password is required. Once paired, changes sync automatically when online.</p>
 <p id="garden-beta-warning" class="garden-beta-warning"><strong>Sync verification underway.</strong> Use only fictional test records until Mac and iPhone pairing, synchronization, and revocation are verified.</p>
 <form id="sync-form" autocomplete="off">
@@ -460,9 +503,9 @@ button{touch-action:manipulation}
 <div class="actions"><button class="primary" id="connect">Pair this device</button></div>
 </form>
 <section id="garden-conflict-panel" hidden aria-label="Review conflicting records">
-<div class="garden-conflict-heading"><span aria-hidden="true">⚠️</span><div><h3>Review changes before syncing</h3><p class="muted">Two versions differ. Nothing has been replaced.</p></div></div>
+<div class="garden-conflict-heading"><span aria-hidden="true">⚠️</span><div><h3>Review changes before syncing</h3><p class="muted">Compare your records before deciding which copy to keep.</p></div></div>
 <div id="garden-conflict-counts" class="garden-conflict-counts"></div>
-<h4 id="garden-diff-heading">Review the differences</h4><p class="muted">The first changed record is open. Open any other record to see its details.</p>
+<h4 id="garden-diff-heading">Review the differences</h4><p class="muted">The first difference is open below. Select another record to review it.</p>
 <div id="garden-conflict-diff" class="garden-conflict-diff" aria-labelledby="garden-diff-heading"></div>
 <details class="garden-conflict-backups"><summary>Backups <span class="muted">· Optional, but recommended</span></summary>
 <p class="muted">Save both files if either contains changes you want to preserve.</p>
@@ -477,7 +520,7 @@ button{touch-action:manipulation}
 <p class="muted garden-conflict-help">Need changes from both versions? Download both backups and close this dialog instead of replacing anything.</p>
 </section>
 <section id="garden-device-panel" hidden>
-<h3>My devices</h3><p class="muted">These browsers can access your synchronized Service Garden. Revoking a device prevents future server access.</p>
+<h3>My devices</h3><p class="muted">These browsers can access your synchronized ABA Track. Revoking a device prevents future server access.</p>
 <div class="garden-device-list" id="garden-devices-list"></div>
 <div class="actions"><button type="button" id="garden-refresh-devices">Refresh devices</button><button type="button" id="garden-check-updates">Check for updates</button><button type="button" id="signout">Unpair this browser</button></div>
 </section>
@@ -576,7 +619,7 @@ function clientDeleteReady(){return !!managedClient&&$('client-backup-ack').chec
 function initializeClientManagement(){
  $('manage-archived').onclick=()=>{setGardenDrawer(false);showArchivedClients()};
  $('manage-archived-directory').onclick=showArchivedClients;
- $('client-backup').onclick=()=>{try{downloadJSON(state,'service-garden-before-delete-'+day()+'.json');notice('Backup download requested. Verify your copy before confirming.')}catch(e){$('client-manage-error').textContent='Backup could not be downloaded: '+e.message}};
+ $('client-backup').onclick=()=>{try{downloadJSON(state,'aba-track-before-delete-'+day()+'.json');notice('Backup download requested. Verify your copy before confirming.')}catch(e){$('client-manage-error').textContent='Backup could not be downloaded: '+e.message}};
  $('client-backup-ack').onchange=()=>{$('client-permanent-delete').disabled=!clientDeleteReady()};
  $('client-delete-confirm').oninput=()=>{$('client-permanent-delete').disabled=!clientDeleteReady()};
  $('client-rename').onclick=async()=>{
@@ -860,7 +903,7 @@ function initializeStorageUI() {
 </script>
 <script>
 'use strict';
-/* Service Garden v0.3: private-key pairing, anonymous device identity, and
+/* ABA Track: private-key pairing, anonymous device identity, and
    conflict-aware local-first sync. This file contains no private pairing key. */
 const GARDEN_SYNC_URL = 'https://upinjjjfjgqzkoquvgbg.supabase.co';
 const GARDEN_SYNC_KEY = 'sb_publishable_auDYoCKfm10rgY4hUGni1A_UWkJXjrW';
@@ -1112,8 +1155,8 @@ function initializeSync(){
  $('sync-now').onclick=()=>gardenWorkspace?syncNow():gardenSyncOpen();
  $('garden-refresh-devices').onclick=gardenDevices;
  $('garden-check-updates').onclick=async()=>{await syncNow();await gardenDevices()};
- $('export-cloud-dialog').onclick=()=>{if(cloudConflict)downloadJSON(cloudConflict.payload,'service-garden-cloud-copy-'+day()+'.json')};
- $('export-local-conflict').onclick=()=>{if(storageReady)downloadJSON(state,'service-garden-local-copy-'+day()+'.json')};
+ $('export-cloud-dialog').onclick=()=>{if(cloudConflict)downloadJSON(cloudConflict.payload,'aba-track-cloud-copy-'+day()+'.json')};
+ $('export-local-conflict').onclick=()=>{if(storageReady)downloadJSON(state,'aba-track-local-copy-'+day()+'.json')};
 
  document.querySelectorAll('input[name="garden-conflict-choice"]').forEach(r=>r.onchange=gardenUpdateConflictChoice);
  $('garden-conflict-ack').onchange=gardenUpdateConflictChoice;
@@ -1562,7 +1605,7 @@ initializeClientManagement();
 </script>
 <script>
 // iPhone Home Screen app and Safari use separate storage; pair each installation independently.
-// Service worker scope is the single live Service Garden installation.
+// Service worker scope stays with the existing app installation.
 if ('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')) {
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).then(reg=>{

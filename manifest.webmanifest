@@ -1,8 +1,8 @@
 {
   "id": "/service-garden/",
-  "name": "Service Garden",
-  "short_name": "Service Garden",
-  "description": "Private service authorization and supervision-hour tracker",
+  "name": "ABA Track",
+  "short_name": "ABA Track",
+  "description": "Private ABA service authorization and supervision-hours tracker",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

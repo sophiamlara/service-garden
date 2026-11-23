@@ -9,7 +9,7 @@ test('all embedded application scripts parse',()=>{
  for(const [i,block] of blocks.entries())assert.doesNotThrow(()=>new vm.Script(block[1],{filename:'inline-'+i+'.js'}));
 });
 test('single application version',()=>{
- assert.match(html,/<title>Service Garden — v0\.4\.3<\/title>/);
+ assert.match(html,/<title>ABA Track — v0\.4\.4<\/title>/);
  assert.match(html,/id="app-version"[^>]*>v0\.4\.3/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
@@ -32,7 +32,7 @@ test('sync configuration and storage identifiers are unchanged',()=>{
 test('home screen metadata targets main application',()=>{
  const m=JSON.parse(fs.readFileSync(new URL('../manifest.webmanifest',import.meta.url),'utf8'));
  assert.equal(m.id,'/service-garden/');
- assert.equal(m.short_name,'Service Garden');
+ assert.equal(m.short_name,'ABA Track');
  assert.equal(m.display,'standalone');
 });
 
@@ -68,4 +68,13 @@ test('mobile conflict controls have compact, fixed-size radios and checkbox',()=
  assert.match(html,/width:20px!important/);
  assert.match(html,/garden-conflict-ack input\[type="checkbox"\]/);
  assert.match(html,/garden-apply-conflict\{width:100%/);
+});
+
+test('ABA Track branding preserves installed app identity',()=>{
+ assert.match(html,/apple-mobile-web-app-title" content="ABA Track"/);
+ assert.match(html,/<div>ABA Track<small>/);
+ assert.doesNotMatch(html,/<title>Service Garden/);
+ const m=JSON.parse(fs.readFileSync(new URL('../manifest.webmanifest',import.meta.url),'utf8'));
+ assert.equal(m.id,'/service-garden/');
+ assert.equal(m.name,'ABA Track');
 });
