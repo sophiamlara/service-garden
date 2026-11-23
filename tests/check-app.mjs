@@ -9,8 +9,8 @@ test('all embedded application scripts parse',()=>{
  for(const [i,block] of blocks.entries())assert.doesNotThrow(()=>new vm.Script(block[1],{filename:'inline-'+i+'.js'}));
 });
 test('single application version',()=>{
- assert.match(html,/<title>ABA Track — v0\.4\.5<\/title>/);
- assert.match(html,/id="app-version"[^>]*>v0\.4\.5/);
+ assert.match(html,/<title>ABA Track — v1\.0<\/title>/);
+ assert.match(html,/id="app-version"[^>]*>v1\.0/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
 test('management controls exist',()=>{
@@ -87,4 +87,11 @@ test('Duo portrait and landscape session log cards keep every field and action',
  assert.match(html,/#logs \.scroll\{overflow:visible/);
  assert.match(html,/cell\.dataset\.label = head\.cells\[i\]\.textContent/);
  for(const label of ['Session date','Authorization period','Time logged','Contact','Delivery method','Provider','Actions']) assert.ok(html.includes("'"+label+"'"));
+});
+
+test('stable v1.0 release is consistent across UI',()=>{
+ assert.match(html,/<title>ABA Track — v1\.0<\/title>/);
+ assert.match(html,/aria-label="Version 1\.0">v1\.0/);
+ assert.match(html,/class="app-version">v1\.0/);
+ assert.doesNotMatch(html,/v0\.4\.5/);
 });
