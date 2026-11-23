@@ -100,8 +100,8 @@ test('stable v1.0 release is consistent across UI',()=>{
 test('ABA Track flower logo is consistently referenced in home screen, tab and sidebar',()=>{
  const manifest=JSON.parse(fs.readFileSync(new URL('../manifest.webmanifest',import.meta.url),'utf8'));
  assert.match(html,/apple-touch-icon\.png\?brand=aba-track-1/);
- assert.match(html,/icon-192\.png\?brand=aba-track-tabs-2/);
- assert.match(html,/favicon\.svg\?brand=aba-track-tabs-2/);
+ assert.match(html,/icon-192\.png\?brand=aba-track-tabs-3/);
+ assert.match(html,/favicon\.svg\?brand=aba-track-tabs-3/);
  assert.match(html,/safari-pinned-tab\.svg\?brand=aba-track-tabs-2/);
  assert.match(html,/class="brand-icon brand-icon-image" src="\.\/icon-192\.png\?brand=aba-track-1"/);
  assert.equal(manifest.name,'ABA Track');
@@ -139,4 +139,15 @@ test('Safari tab assets use valid SVG and include a monochrome pinned-tab icon',
  assert.match(mask,/<svg[^>]+viewBox="0 0 512 512"/);
  assert.match(mask,/fill="black"/);
  assert.doesNotMatch(mask,/<rect/);
+});
+
+test('Safari favicon.ico offers three recognized small icon dimensions',()=>{
+ assert.match(html,/rel="icon" href="\.\/favicon\.ico\?brand=aba-track-tabs-3" type="image\/x-icon"/);
+ const ico=fs.readFileSync(new URL('../favicon.ico',import.meta.url));
+ assert.equal(ico.readUInt16LE(0),0);assert.equal(ico.readUInt16LE(2),1);assert.equal(ico.readUInt16LE(4),3);
+ const dimensions=[16,32,48];for(let i=0;i<3;i++){
+  const p=6+i*16;assert.equal(ico[p],dimensions[i]);assert.equal(ico[p+1],dimensions[i]);
+  const count=ico.readUInt32LE(p+8),offset=ico.readUInt32LE(p+12);
+  assert.ok(count>100);assert.ok(offset+count<=ico.length);
+ }
 });

@@ -1,8 +1,8 @@
 'use strict';
 // ABA Track live scope. Network-first so refresh displays newly deployed versions;
 // offline cache preserves the UI, never caches cloud requests or private data.
-const CACHE='service-garden-v10-brand-shell-3';
-const FILES=['./','./index.html','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png','./favicon.svg'];
+const CACHE='service-garden-v10-brand-shell-4';
+const FILES=['./','./index.html','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png','./favicon.svg','./favicon.ico'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{
  const cache=await caches.open(CACHE);await cache.addAll(FILES);await self.skipWaiting();
 })()));
