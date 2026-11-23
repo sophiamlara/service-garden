@@ -9,8 +9,8 @@ test('all embedded application scripts parse',()=>{
  for(const [i,block] of blocks.entries())assert.doesNotThrow(()=>new vm.Script(block[1],{filename:'inline-'+i+'.js'}));
 });
 test('single application version',()=>{
- assert.match(html,/<title>ABA Track — v0\.4\.4<\/title>/);
- assert.match(html,/id="app-version"[^>]*>v0\.4\.4/);
+ assert.match(html,/<title>ABA Track — v0\.4\.5<\/title>/);
+ assert.match(html,/id="app-version"[^>]*>v0\.4\.5/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
 test('management controls exist',()=>{
@@ -77,4 +77,14 @@ test('ABA Track branding preserves installed app identity',()=>{
  const m=JSON.parse(fs.readFileSync(new URL('../manifest.webmanifest',import.meta.url),'utf8'));
  assert.equal(m.id,'/service-garden/');
  assert.equal(m.name,'ABA Track');
+});
+
+test('Duo portrait and landscape session log cards keep every field and action',()=>{
+ assert.match(html,/@media\(max-width:1250px\)/);
+ assert.match(html,/#logs \.session-table tbody tr/);
+ assert.match(html,/grid-template-areas:"date time" "period period" "contact modality" "provider actions"/);
+ assert.match(html,/grid-template-areas:"date time" "period period" "contact modality" "provider provider" "actions actions"/);
+ assert.match(html,/#logs \.scroll\{overflow:visible/);
+ assert.match(html,/cell\.dataset\.label = head\.cells\[i\]\.textContent/);
+ for(const label of ['Session date','Authorization period','Time logged','Contact','Delivery method','Provider','Actions']) assert.ok(html.includes("'"+label+"'"));
 });
