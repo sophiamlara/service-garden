@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Supervision Tracker</title>
+<meta name="theme-color" content="#192949">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+
+
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#162341;font:16px system-ui,sans-serif}main,header>div{max-width:1120px;margin:auto;padding:28px}header{background:#192949;color:#fff}header>div,.line,.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.8rem,5vw,2.65rem);letter-spacing:-.04em}header p{color:#d1dcf2;margin-top:6px}.actions{justify-content:flex-start}button,select,input{font:inherit;border:1px solid #aebbd2;border-radius:9px;padding:9px 12px;background:white;color:#162341}button{cursor:pointer;font-weight:650}.primary{background:#354cc7;border-color:#354cc7;color:white}header .primary{background:#d9e1ff;color:#192949;border-color:#d9e1ff}button:hover{filter:brightness(.94)}:focus-visible{outline:3px solid #6d83ff;outline-offset:2px}.cards,.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}.metrics{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:15px 0 30px}.metric,article,.empty{background:#fff;border:1px solid #dbe3f1;border-radius:15px;padding:17px}.metric strong{display:block;font-size:1.85rem;letter-spacing:-.04em}.muted,small{color:#506283}section{margin-bottom:28px}.section-head{margin-bottom:13px}article{display:grid;gap:10px}.pill{background:#e9edff;color:#2e429e;border-radius:100px;padding:3px 9px;font-size:.83rem;font-weight:700}.warn{background:#fff0df;color:#85451a}.track{height:12px;background:#e5ebf6;border-radius:20px;overflow:hidden}.fill{height:100%;background:#516ae0}.fill.over{background:#bd521f}.scroll{overflow:auto;background:white;border:1px solid #dbe3f1;border-radius:14px}table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:10px 14px;border-bottom:1px solid #e7edf7;white-space:nowrap}th{background:#eaf0fa}tr:last-child td{border-bottom:0}dialog{width:min(94vw,470px);border:1px solid #c6d1e6;border-radius:16px;padding:22px;color:#162341}dialog::backdrop{background:#12203b88}form{display:grid;gap:13px}label{display:grid;gap:5px;font-weight:600}label input,label select{width:100%}.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pair label{min-width:0}.error{color:#a43b1b}#notice{margin-top:12px}.empty{border-style:dashed}.hint{margin-top:8px}footer{padding-bottom:20px}
+
+.overview{margin:0 0 24px}.overview-title{margin-top:20px}.client-section{display:grid;gap:14px;margin-bottom:28px}.client-heading{padding:5px 0 9px;border-bottom:1px solid #dbe3f1}.client-heading h3{font-size:1.4rem}.donut-row{display:flex;align-items:center;gap:15px;flex-wrap:wrap}.donut{--ring:#516ae0;width:88px;height:88px;flex:none;display:grid;place-items:center;border-radius:50%;background:conic-gradient(var(--ring) var(--pct),#e5ebf6 0)}.donut.over{--ring:#bd521f}.donut strong{display:grid;place-items:center;border-radius:50%;background:#fff;width:63px;height:63px}.stats{display:grid;gap:4px}.metric small{display:block}.source-note{font-size:.85rem}.client-nav{margin:0 0 12px}.client-nav button{background:#eaf0ff}.section-head label{display:flex;align-items:center;gap:8px}.summary-note{margin-bottom:12px}
+.donut-key{display:flex;gap:7px 14px;flex-wrap:wrap}.donut-key small{display:inline-flex;align-items:center;gap:5px}.donut-swatch{width:10px;height:10px;border-radius:3px;flex:none}
+.period-history{border-top:1px solid #e5ebf6;padding-top:9px}.period-history summary{cursor:pointer;font-weight:650}.period-history .scroll{margin-top:8px}.period-history th,.period-history td{padding:6px 8px;font-size:.84rem}.period-history .selected-month{background:#eef3ff}
+</style>
+<style>.sync-panel{background:#fff;border:1px solid #dbe3f1;border-radius:15px;padding:16px;margin:16px 0 22px}.sync-panel p{margin-top:6px}.sync-panel #conflict{margin-top:15px;border-top:1px solid #dbe3f1;padding-top:12px}button,input,select{min-height:44px}button:disabled{cursor:default;opacity:.6}details label{margin-top:12px}dialog{max-height:90dvh;overflow-y:auto}#recovery-list{margin:15px 0}#sync-detail{overflow-wrap:anywhere}#notice:empty{display:none}#notice:not(:empty){padding:12px;border-radius:10px;background:#e9edff}main{padding-bottom:max(28px,env(safe-area-inset-bottom))}select{max-width:100%}.muted,small{line-height:1.5}
+@media(max-width:600px){main,header>div{padding:18px}header .actions{width:100%}header .actions button{flex:1}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.metric{padding:13px}.metric strong{font-size:1.6rem}.cards{grid-template-columns:minmax(0,1fr)}.section-head{align-items:flex-start}.section-head select{max-width:100%}.section-head label{flex-wrap:wrap}.pair{grid-template-columns:1fr}dialog{padding:18px}#sync-form .actions button{flex:1}.session-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.session-table,.session-table tbody,.session-table tr,.session-table td{display:block;width:100%}.session-table tr{padding:12px;border-bottom:2px solid #dbe3f1}.session-table td{white-space:normal;padding:6px 0;border:0;overflow-wrap:anywhere}.session-table td::before{content:attr(data-label);display:block;font-size:.8rem;color:#506283;font-weight:650}.session-table td:last-child::before{display:none}.session-table .actions{margin-top:6px}.client-nav{overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px}.client-nav button{flex:none}footer .actions button{flex:1}.period-history th,.period-history td{font-size:.875rem}.source-note{font-size:.875rem}}
+</style><style>:root{--ink:#34473e;--muted:#64736a;--green:#426b54;--paper:#faf9f4;--line:#e1e5da}*{box-sizing:border-box}[hidden]{display:none!important}body{background:var(--paper);color:var(--ink);font-family:ui-rounded,'Avenir Next',system-ui,sans-serif;line-height:1.45}button,input,select{font-family:inherit;color:var(--ink);border:1px solid #d8dfd2;border-radius:12px;min-height:44px}button{box-shadow:0 3px 0 #dce1d5,0 5px 12px #374c3510;transition:transform .15s,box-shadow .15s}button:hover{filter:none;transform:translateY(-1px);box-shadow:0 4px 0 #d4ddcb,0 7px 15px #374c3518}button:active{transform:translateY(1px)}:focus-visible{outline:3px solid #48765a;outline-offset:3px}.primary,header .primary{background:#4c745a;border-color:#4c745a;color:white;box-shadow:0 3px 0 #34523e,0 8px 16px #426b5420}.muted,small{color:var(--muted)}small{font-size:.875rem}h1{font-size:clamp(1.9rem,3vw,2.8rem);font-weight:750;letter-spacing:-.045em}h2{font-size:1.4rem;letter-spacing:-.025em}h3{font-size:1.08rem}header{margin-left:250px;background:transparent;color:var(--ink)}header>div{padding:38px 36px 18px;max-width:1300px}header p{color:var(--muted);font-size:.95rem}.eyebrow{font-size:.72rem!important;letter-spacing:.14em;font-weight:750;margin-bottom:8px!important;color:#687c60!important}main{margin-left:250px;max-width:1300px;padding:0 36px 95px}#sidebar{position:fixed;inset:0 auto 0 0;width:250px;padding:30px 20px;background:#f2ece2;border-right:1px solid #d9e1d1;display:flex;flex-direction:column;z-index:20;overflow-y:auto}.brand{display:flex;gap:11px;align-items:center;font-size:1.12rem;font-weight:750;margin:0 0 36px}.brand small{display:block;font-size:.57rem;letter-spacing:.12em;margin-top:3px}.brand-icon{width:43px;height:43px;border-radius:15px;background:#fafcf5;color:#65834b;display:grid;place-items:center;font-size:30px;box-shadow:0 3px 0 #c9d6b8}.nav-label{font-size:.7rem;letter-spacing:.13em;color:#65775e;font-weight:750;margin:22px 9px 12px}.nav-item{width:100%;display:block;text-align:left;background:#f9faf4;margin-bottom:12px;padding:13px 14px;font-size:.9rem;border-color:#dce2d3}.nav-item.selected{background:#fffef9;border-color:#8fa687;box-shadow:0 3px 0 #b5c5a7,0 7px 16px #4d68431c}.client-tab{border-left:6px solid var(--client);padding-left:13px}.nav-subtitle{display:block;font-size:.75rem;font-weight:450;color:#6d786d;margin-top:2px}.sidebar-note{margin-top:auto;padding:24px 9px 0;font-size:.82rem;color:#687761}.sidebar-note p{margin:8px 0 14px}.sidebar-note small{font-size:.7rem}#mobile-menu,#sidebar-close{display:none}.sync-panel{background:#eff3e9;border:1px solid #dfe7d8;box-shadow:none;border-radius:14px;padding:12px 16px;margin:12px 0 28px}.sync-panel strong{font-size:.85rem}.sync-panel p{font-size:.8rem;margin-top:2px}.sync-panel button{font-size:.8rem;background:#fafcf6;box-shadow:none}.metrics{gap:16px;margin:18px 0}.metric{border-radius:20px;padding:21px;border:1px solid #e0e5d9;box-shadow:0 5px 16px #35452c05;background:#f0dfd2}.metric:nth-child(2){background:#f5e7bb}.metric:nth-child(3){background:#e1ebf2}.metric:nth-child(4){background:#eadeef}.metric strong{font-size:2.1rem;margin-top:10px}.metric span{font-size:.85rem}.summary-note{font-size:.85rem}.overview-title{margin-top:0}.visual-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:20px}.visual-grid article{padding:24px}.visual-grid article>p{font-size:.85rem}article{background:#fffefb;border:1px solid var(--line);border-radius:22px;box-shadow:0 4px 0 #e8eadf,0 8px 22px #48503b06;padding:22px;gap:14px}.donut{width:110px;height:110px;--ring:#79996c;background:conic-gradient(var(--ring) var(--pct),#e9ecdf 0)}.donut strong{width:81px;height:81px;background:#fffefb;font-size:1.25rem}.donut-row{gap:22px;margin:12px 0}.pill{color:#48623d;background:#eaf0df;font-size:.75rem}.warn{background:#f5e7d6;color:#85522b}.track{height:9px;background:#eeeee6;margin-top:8px}.service-bar{margin-bottom:10px}.service-bar strong{font-size:.85rem}.service-bar small{font-size:.8rem}.fill{background:#7d9a75}#service-bars{gap:4px}.directory-card{border-top:5px solid var(--client);gap:10px}.directory-card h3{font-size:1.4rem}.client-badge{display:grid;place-items:center;width:47px;height:47px;background:color-mix(in srgb,var(--client) 14%,white);border-radius:15px;font-size:.85rem;font-weight:750;color:var(--ink)}.directory-card p{font-size:.88rem}.directory-card small{font-size:.8rem}.view-client{margin-top:6px;background:#f5f6ed;box-shadow:0 3px 0 #e2e5d6}.cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,235px),1fr));gap:18px}#directory-cards{grid-template-columns:repeat(2,minmax(0,1fr))}#client-directory{margin-top:34px}.search-label input{background:#fffefb;max-width:240px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.client-heading{border-left:6px solid var(--client);padding:12px 16px;background:#f0f2e8;border-bottom:0;border-radius:12px}#quick-log{position:fixed;right:30px;bottom:24px;z-index:15;padding:14px 23px;border-radius:18px}dialog{background:#fffefb;border-color:#d9dfd0;box-shadow:0 20px 80px #283f3c30}#log-dialog{border-top:7px solid var(--client,#759785)}dialog::backdrop{background:#23352c66}th{background:#edf1e6}td,th{border-color:#e8ebdf}.scroll{border-color:var(--line)}footer{margin-top:30px;padding-top:20px;border-top:1px solid var(--line)}#notice:not(:empty){background:#edf1e2;color:#40533b}.period-history{border-color:var(--line)}select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23596f5d' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:34px}
+@media(min-width:1500px){main{margin-right:auto;margin-left:calc(250px + (100vw - 1550px)/2)}}
+@media(max-width:1050px){#sidebar{width:215px;padding:24px 15px}main,header{margin-left:215px}main{padding:0 24px 95px}header>div{padding:28px 24px 16px}.visual-grid{grid-template-columns:1fr}.brand{font-size:1rem}.brand-icon{width:35px;height:35px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){#sidebar{width:min(300px,85vw);transform:translateX(-105%);transition:transform .2s;box-shadow:15px 0 50px #263e2d25}#sidebar.open{transform:translateX(0)}#sidebar-close,#mobile-menu{display:block}#sidebar-close{font-size:1.2rem;padding:0 10px;min-height:35px}header,main{margin-left:0}header>div{padding:20px 18px 12px;gap:18px}header>div>div:first-of-type{width:100%}header .actions{display:none}#mobile-menu{font-size:.85rem;background:#edf2e5;box-shadow:none}main{padding:0 18px 95px}.sync-panel{margin:10px 0 24px}.sync-panel .actions{display:none}.metrics{gap:11px}.metric{padding:16px}.metric strong{font-size:1.7rem}.visual-grid{gap:16px}.visual-grid article{padding:20px}#directory-cards{grid-template-columns:1fr}.search-label,.search-label input{width:100%;max-width:none}#quick-log{bottom:max(20px,env(safe-area-inset-bottom));right:18px}.section-head{gap:16px}.directory-card{padding:20px}.session-table tr{border-color:#e0e6d7}h1{font-size:2rem}.pair{grid-template-columns:1fr}.client-heading{padding:12px}.sidebar-note{margin-top:25px}footer .hint{font-size:.8rem}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* Broader garden palette: warm paper, mineral blue, clay, ochre and plum. */
+:root{--ink:#443e39;--muted:#746d65;--line:#e7e0d6;--paper:#fbf9f4}
+#sidebar{background:#f2ece2;border-color:#e3d9ca}
+.brand-icon{background:#f6e5bc;color:#9a742a;box-shadow:0 3px 0 #dfc98f}.brand small,.nav-label{color:#807369}
+.nav-item{background:#fffdf8;border-color:#e3dacf;box-shadow:0 3px 0 #ddd4c7,0 5px 14px #58442e0b}
+.nav-item.selected{background:#fffefa;border-color:#a99b88;box-shadow:0 3px 0 #d2c4b2,0 7px 16px #58442e14}
+#overview-nav.selected{border-left:5px solid #b58a27}#sessions-nav.selected{border-left:5px solid #597f9f}
+.client-tab.selected{border-left-color:var(--client);background:color-mix(in srgb,var(--client) 9%,#fffefa)}
+.nav-subtitle,.sidebar-note{color:#796e63}.eyebrow{color:#927f68!important}
+.sync-panel{background:#f2eee7;border-color:#e7dfd3}.sync-panel button{background:#fffdf8}
+.metric{background:#f0dfd2;border-color:#e8d8c9}
+.metric:nth-child(2){background:#f5e7bb;border-color:#eadba9}
+.metric:nth-child(3){background:#e1ebf2;border-color:#d7e1ea}
+.metric:nth-child(4){background:#eadeef;border-color:#e0d3e6}
+.metric:nth-child(1) strong{color:#9a5141}.metric:nth-child(2) strong{color:#826319}.metric:nth-child(3) strong{color:#466c8b}.metric:nth-child(4) strong{color:#78538a}
+article{box-shadow:0 4px 0 #ece5da,0 8px 22px #594a3706}.track{background:#eee9e1}.pill{background:#efe9db;color:#6c5d41}.warn{background:#f7dfd6;color:#984a37}
+.directory-card .view-client{background:color-mix(in srgb,var(--client) 9%,#fffefa);border-color:color-mix(in srgb,var(--client) 25%,#eee8df);box-shadow:0 3px 0 color-mix(in srgb,var(--client) 22%,#eee8df)}
+.client-heading{background:color-mix(in srgb,var(--client) 9%,#fffefa)}.donut{--ring:#bd963a}.donut.complete{--ring:#52845c}
+th{background:#f0ece4}td,th{border-color:#ece6db}.view-client{color:var(--ink)}
+
+.client-tab{border-left:6px solid var(--client)}
+#new-client{font-size:.8rem;background:transparent;box-shadow:none;border-style:dashed}
+
+.metric{box-shadow:0 4px 0 #dccbbd,0 8px 14px #594a3708}.metric:nth-child(2){box-shadow:0 4px 0 #ddcd99,0 8px 14px #594a3708}.metric:nth-child(3){box-shadow:0 4px 0 #c5d5e1,0 8px 14px #594a3708}.metric:nth-child(4){box-shadow:0 4px 0 #d4c3dd,0 8px 14px #594a3708}
+@media(max-width:720px){#sidebar{visibility:hidden;transition:none}#sidebar.open{visibility:visible}}
+/* Subtle paper texture belongs to the canvas, never the solid raised panels. */
+body{background-color:#fbf9f4;background-image:radial-gradient(circle,#a99a7f20 .7px,transparent .9px),linear-gradient(145deg,#fbf9f4 10%,#f5f0e7 100%);background-size:20px 20px,100% 100%;background-attachment:fixed}
+.client-tab.selected,.client-tab.selected:hover{border-color:color-mix(in srgb,var(--client) 50%,#e3dacf);border-left-color:var(--client);box-shadow:0 3px 0 color-mix(in srgb,var(--client) 35%,#ded6ca),0 0 0 2px color-mix(in srgb,var(--client) 15%,transparent),0 0 22px color-mix(in srgb,var(--client) 24%,transparent)}
+.client-heading{box-shadow:0 0 20px color-mix(in srgb,var(--client) 13%,transparent)}
+.primary:focus-visible{box-shadow:0 3px 0 #34523e,0 0 20px #668e6860}.donut.complete{box-shadow:0 0 15px #52845c25}
+#drawer-shade{position:fixed;inset:0;z-index:19;background:#3c342b40;border:0;border-radius:0;box-shadow:none;transform:none;padding:0;width:100%;height:100%;cursor:default}
+main,header>div,.cards,.visual-grid,.metric,article{min-width:0}#page-title,.client-heading h3{overflow-wrap:anywhere}
+#quick-log{right:max(18px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom))}
+dialog{max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overscroll-behavior:contain}
+@media(max-width:960px){
+ #sidebar{width:min(310px,87vw);visibility:hidden;transform:translateX(-105%);transition:none;box-shadow:15px 0 50px #3c342b25;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));overscroll-behavior:contain}
+ #sidebar.open{visibility:visible;transform:translateX(0)}
+ #sidebar-close,#mobile-menu{display:block;min-width:44px;min-height:44px}
+ #mobile-menu{background:#f4eee3;box-shadow:0 3px 0 #ded3c3;font-size:.85rem}
+ header,main{margin-left:0}header>div{padding-top:max(20px,env(safe-area-inset-top))}
+ main{padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+ body.drawer-open{overflow:hidden}
+}
+@media(min-width:961px){#sidebar{visibility:visible;transform:none}#drawer-shade{display:none}}
+@media(max-height:500px){#sidebar{padding-top:12px;padding-bottom:12px}.brand{margin-bottom:12px}.nav-label{margin-top:12px}.sidebar-note{display:none}dialog{padding:14px}#quick-log{padding:10px 17px}}
+
+/* Sync lights convey status; text remains readable without color or motion. */
+.welcome-greeting{font-size:clamp(1.65rem,3vw,2.2rem);font-weight:750;color:#9a5141;letter-spacing:-.03em;margin:0 0 8px}
+#sync-indicator{--signal:#82796d;display:flex;align-items:center;gap:10px}
+#sync-indicator[data-state="synced"]{--signal:#44835b}
+#sync-indicator[data-state="checking"]{--signal:#477fae}
+#sync-indicator[data-state="syncing"]{--signal:#b48a20}
+#sync-indicator[data-state="error"],#sync-indicator[data-state="conflict"],#sync-indicator[data-state="offline"]{--signal:#b64e44}
+.sync-led{width:11px;height:11px;flex:none;border-radius:50%;background:var(--signal);border:1px solid #ffffff88;box-shadow:0 0 0 3px color-mix(in srgb,var(--signal) 12%,transparent),0 0 10px color-mix(in srgb,var(--signal) 45%,transparent)}
+#sync-indicator[data-state="checking"] .sync-led,#sync-indicator[data-state="syncing"] .sync-led{animation:sync-blink 1.6s ease-in-out infinite}
+.sync-progress{width:136px;height:4px;border-radius:8px;background:#e1dbd1;overflow:hidden;margin:9px 0 7px 21px}
+.sync-progress span{display:block;width:38%;height:100%;border-radius:inherit;background:#477fae;animation:sync-travel 1.8s ease-in-out infinite}
+#sync-indicator[data-state="syncing"] + .sync-progress span{background:#b48a20}
+#sync-demo-tag{font-size:.75rem;background:#e7dfd1;padding:2px 7px;border-radius:8px}
+.sync-preview-controls{margin-top:12px;border-top:1px solid #e1dbd1;padding-top:8px;font-size:.875rem}
+.sync-preview-controls summary{cursor:pointer;color:var(--muted)}.sync-preview-controls label{max-width:280px;margin-top:10px}
+.sync-panel strong{font-size:.9rem}
+@keyframes sync-blink{50%{opacity:.35;box-shadow:none}}
+@keyframes sync-travel{0%{transform:translateX(-110%)}100%{transform:translateX(370%)}}
+@media(prefers-reduced-motion:reduce){.sync-led,.sync-progress span{animation:none!important}.sync-progress span{width:100%;opacity:.65}}
+
+/* Opaque compact client summary covers scrolling content, including session logs. */
+#sticky-client{position:fixed;top:0;left:250px;right:0;z-index:17;margin:0;padding:12px 30px 14px;border-bottom:3px solid var(--client);background:#fffdf8;box-shadow:0 5px 0 #e4dbce,0 12px 25px #47382b22}
+.sticky-client-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+#sticky-client-code{font-size:1.2rem;border-left:5px solid var(--client);padding-left:10px}
+#sticky-client-month{font-size:.875rem;color:var(--muted)}
+#sticky-service-bars{display:flex;gap:20px;overflow-x:auto;padding-bottom:4px;overscroll-behavior-x:contain}
+.sticky-service{flex:1 0 165px;max-width:260px;min-width:0;font-size:.875rem;line-height:1.3}
+.sticky-service>span,.sticky-service>small{display:block}.sticky-service>small{font-size:.8rem;margin-top:3px}
+.sticky-service .track{height:5px;margin-top:6px}
+#sticky-clients-menu{display:none}
+#quick-log{box-shadow:0 4px 0 #304f39,0 9px 18px #283d3340,0 18px 35px #283d3324}
+#quick-log:hover{box-shadow:0 5px 0 #304f39,0 12px 22px #283d334a,0 20px 38px #283d3326}
+html{scroll-padding-top:170px}
+@media(max-width:1050px){#sticky-client{left:215px}}
+@media(max-width:960px){#sticky-client{left:0;padding: max(8px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) 9px max(18px,env(safe-area-inset-left))}#sticky-clients-menu{display:block;padding:6px 10px;min-height:44px}.sticky-client-top{margin-bottom:6px}#sticky-service-bars{gap:16px}.sticky-service{flex-basis:165px}}
+@media(max-height:500px){#sticky-client{padding-top:5px;padding-bottom:5px}.sticky-client-top{margin-bottom:3px}.sticky-service>small{display:none}.sticky-service .track{margin-top:3px}}
+
+/* A deliberate grid replaces automatic wrapping in the main header. */
+header>div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"title sync actions";padding:24px 30px 22px;gap:12px 16px;align-items:center}
+.header-title{grid-area:title;min-width:0;width:auto}
+header #page-title{font-size:1.75rem;line-height:1.2;letter-spacing:-.03em;font-weight:750}
+header #page-subtitle{display:block;font-size:.9375rem;line-height:1.4;margin:4px 0 0;max-width:42ch}
+header .header-actions{grid-area:actions;display:flex;flex-wrap:nowrap;gap:10px;margin:0;width:auto;align-items:center;justify-self:end}
+header .header-actions>button{flex:none;font-size:.875rem;padding:9px 12px;white-space:nowrap}
+#mobile-menu{grid-area:menu;justify-self:start}
+#header-sync{grid-area:sync;justify-self:end;position:relative;font-size:.875rem;margin:0;min-width:0;max-width:100%}
+#header-sync>summary{display:flex;flex-direction:column;justify-content:center;min-height:44px;padding:6px 8px;cursor:pointer;list-style:none;border-radius:10px}
+#header-sync>summary::-webkit-details-marker{display:none}
+#header-sync>summary:hover{background:#eee8de}
+#sync-indicator{gap:7px;flex-wrap:wrap}#sync-status{font-size:.875rem;font-weight:600;white-space:nowrap}
+.sync-led{width:9px;height:9px}
+#header-sync .sync-progress{width:85px;height:3px;margin:5px 0 0 16px}
+.sync-popover{position:absolute;right:0;top:calc(100% + 8px);width:min(340px,calc(100vw - 36px));padding:16px;background:#fffdf8;border:1px solid #ded5c8;border-radius:16px;box-shadow:0 8px 28px #47382b26;z-index:18}
+.sync-popover .line{display:block}.sync-popover .actions{display:flex;margin:12px 0 0;width:auto}.sync-popover p{font-size:.875rem;color:var(--muted)}
+.overview-title{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;margin-top:0}
+#month-heading{font-size:1.25rem;line-height:1.3}
+.overview-title .month-picker{display:block;justify-self:end;min-width:0;width:min(100%,15rem)}
+.month-picker #month{width:100%;min-width:0;font-size:1rem}
+@media(max-width:960px){
+ header>div{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"menu sync" "title actions";padding:14px max(18px,env(safe-area-inset-right)) 22px max(18px,env(safe-area-inset-left));padding-top:max(14px,env(safe-area-inset-top));row-gap:16px}
+ header>div>div.header-title{width:auto}
+ #mobile-menu{font-size:.875rem;padding:8px 12px}
+}
+@media(max-width:720px){
+ header .header-actions #add-log{display:none}
+ header #page-title{font-size:1.625rem}
+ header #page-subtitle{display:block;font-size:.875rem}
+ header .header-actions{width:auto}
+ header .header-actions>button{flex:none}
+ #header-sync .sync-popover .actions{display:flex}
+ .sync-popover{max-height:65dvh;overflow-y:auto}
+}
+@media(max-width:360px){
+ header>div{column-gap:10px;padding-left:16px;padding-right:16px}
+ header .header-actions>button{padding:9px 10px}
+ .overview-title{grid-template-columns:1fr;gap:8px}
+ .overview-title .month-picker{width:100%;justify-self:stretch}
+}
+
+/* Compact, information-dense revision. The data cards remain solid and raised. */
+header>div{padding:17px 26px 14px;column-gap:12px;row-gap:9px}
+header #page-title{font-size:1.65rem}header #page-subtitle{margin-top:2px}
+main{padding-left:26px;padding-right:26px}section{margin-bottom:20px}
+.metrics{gap:11px;margin:12px 0 12px;grid-template-columns:repeat(4,minmax(0,1fr))}
+.metric{border-radius:16px;padding:13px 15px;min-height:106px}
+.metric strong{font-size:clamp(1.42rem,2vw,1.85rem);line-height:1.2;margin-top:5px}
+.metric span{font-size:.82rem;line-height:1.3}
+.summary-note{margin:6px 0 0;font-size:.8rem}
+.visual-grid{gap:14px;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr)}
+.visual-grid article{padding:16px 18px}
+article{border-radius:17px;padding:16px;gap:10px}
+.donut{width:85px;height:85px}.donut strong{width:63px;height:63px;font-size:1.05rem}
+.donut-row{margin:4px 0;gap:14px}
+#client-directory{margin-top:22px}
+#directory-cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,205px),1fr));gap:12px}
+.directory-card{padding:15px;gap:7px}
+.directory-card h3{font-size:1.18rem}
+.client-badge{width:38px;height:38px;border-radius:12px}
+.client-heading{padding:9px 12px}.client-section{gap:10px;margin-bottom:18px}
+.cards{gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.section-head{margin-bottom:9px}
+.service-bar{margin-bottom:7px}
+.period-history{padding-top:7px}
+.scroll th,.scroll td{padding:8px 10px}
+#services-section h2,#logs-section h2,#client-directory h2{font-size:1.25rem}
+#quick-log{padding:12px 19px}
+
+/* Sticky header: aligned inline rings, with wrapping rather than horizontal scrolling. */
+#sticky-client,#sticky-global{position:fixed;top:0;right:0;left:250px;z-index:17;background:#fffdf8;border-bottom:3px solid var(--client,#b58a27);box-shadow:0 5px 0 #e4dbce,0 12px 25px #47382b20;min-width:0}
+#sticky-client{display:flex;align-items:center;gap:11px;padding:7px 22px;min-height:83px}
+.sticky-identity{display:flex;align-items:center;gap:5px;flex:0 0 auto;min-width:0}
+.sticky-client-name{display:flex;flex-direction:column;gap:2px;min-width:0}
+#sticky-client-code{font-size:1.13rem;line-height:1.15;border-left:4px solid var(--client);padding-left:8px;overflow-wrap:anywhere}
+#sticky-client-month{font-size:.72rem;color:var(--muted);padding-left:12px;white-space:nowrap}
+#sticky-service-rings{display:flex;flex:1 1 auto;min-width:0;flex-wrap:wrap;justify-content:flex-end;align-items:flex-start;gap:4px 7px;overflow:visible;padding:0}
+.sticky-ring{flex:0 0 65px;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.12}
+.sticky-ring-visual{width:52px;height:52px;flex:none;display:block}
+.sticky-ring-label{font-size:.715rem;font-weight:650;line-height:1.2;overflow-wrap:anywhere;max-width:72px}
+.sticky-ring-period{font-size:.62rem;color:#835c3f;line-height:1.2;margin-top:1px}
+.sticky-no-services{font-size:.85rem}
+#sticky-clients-menu{display:none;flex:none}
+#sticky-global{display:flex;align-items:center;gap:11px;padding:9px 25px;min-height:57px;--client:#b58a27}
+#sticky-global-menu{display:none;flex:none}
+.sticky-global-title{display:flex;flex-direction:column;gap:1px;min-width:0}
+#sticky-global-heading{font-size:1rem;line-height:1.2}
+#sticky-global-subtitle{font-size:.75rem;color:var(--muted)}
+#sticky-global-sync{display:flex;align-items:center;gap:7px;margin-left:auto;color:var(--muted);font-size:.8rem;white-space:nowrap;border:0;background:transparent;box-shadow:none;padding:5px 7px;min-height:44px}#sticky-global-sync:hover{background:#f4eee3;box-shadow:none}
+html{scroll-padding-top:140px}
+@media(max-width:1050px){#sticky-client,#sticky-global{left:215px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:960px){
+ header>div{padding:11px max(18px,env(safe-area-inset-right)) 13px max(18px,env(safe-area-inset-left));row-gap:9px}
+ main{padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
+ #sticky-client,#sticky-global{left:0}
+ #sticky-client{padding:7px max(14px,env(safe-area-inset-right)) 7px max(14px,env(safe-area-inset-left));gap:9px}
+ #sticky-clients-menu,#sticky-global-menu{display:block;min-width:40px;min-height:44px;padding:5px 8px;background:#f4eee3;box-shadow:0 2px 0 #ded3c3}
+ #sticky-global{padding:7px max(14px,env(safe-area-inset-right)) 7px max(14px,env(safe-area-inset-left))}
+ .visual-grid{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+ main{padding-bottom:88px}
+ .metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .metric{min-height:95px;padding:12px}
+ .metric strong{font-size:1.55rem}
+ .visual-grid article{padding:14px}
+ #directory-cards{grid-template-columns:1fr}
+ .donut{width:80px;height:80px}.donut strong{width:59px;height:59px}
+ .sticky-ring{flex-basis:61px}
+ .sticky-ring-visual{width:48px;height:48px}
+ .sticky-ring-label{font-size:.69rem}
+ .sticky-ring-period{font-size:.6rem}
+ #sticky-global-status{max-width:100px;overflow:hidden;text-overflow:ellipsis}
+ /* Two-column session rows: the values remain legible but each entry is shorter. */
+ .session-table tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,auto);gap:4px 12px;padding:10px 12px}
+ .session-table td{min-width:0;padding:1px 0}
+ .session-table td::before{display:inline;margin-right:5px;font-size:.75rem}
+ .session-table td:nth-child(1){grid-column:1;grid-row:1;font-weight:700}
+ .session-table td:nth-child(3){grid-column:2;grid-row:1;text-align:right;font-weight:700}
+ .session-table td:nth-child(1)::before,.session-table td:nth-child(3)::before{display:none}
+ .session-table td:nth-child(2){grid-column:1/-1;grid-row:2}
+ .session-table td:nth-child(4){grid-column:1;grid-row:3}
+ .session-table td:nth-child(5){grid-column:2;grid-row:3;text-align:right}
+ .session-table td:nth-child(6){grid-column:1;grid-row:4}
+ .session-table td:nth-child(7){grid-column:2;grid-row:4}
+ .session-table .actions{margin:0;justify-content:flex-end;gap:5px}
+ .session-table .actions button{padding:6px 9px;font-size:.8rem}
+}
+@media(min-width:500px) and (max-width:720px){
+ #directory-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:499px){
+ /* With four or more services, one full-width ring row is shorter and clearer than a staggered cluster. */
+ #sticky-client.many-services{display:grid;grid-template-columns:1fr;gap:3px;padding-top:5px;padding-bottom:6px}
+ #sticky-client.many-services .sticky-identity{justify-content:flex-start}
+ #sticky-client.many-services #sticky-service-rings{justify-content:space-around;width:100%}
+}
+@media(max-width:390px){
+ .sticky-identity{gap:2px}
+ #sticky-client{gap:6px;padding-left:9px;padding-right:9px}
+ #sticky-clients-menu{padding:4px 6px;min-width:39px}
+ #sticky-client-code{font-size:1.05rem}
+ #sticky-client-month{font-size:.67rem}
+ #sticky-service-rings{gap:3px 4px}
+ .sticky-ring{flex-basis:57px}
+ .sticky-ring-visual{width:45px;height:45px}
+ .sticky-ring-label{font-size:.67rem}
+ #month-heading{font-size:1.16rem}
+}
+@media(prefers-reduced-motion:reduce){#sticky-client,#sticky-global{transition:none!important}}
+</style>
+</head>
+<body>
+<button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Design preview · sample data</small></div></aside>
+<header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="disconnected"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Not connected</strong><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
+<details class="sync-preview-controls"><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p>Visual examples only. No cloud connection or upload.</p></details><div id="conflict" hidden><p class="error">Both devices changed the same record. Sync has paused; neither copy has been overwritten.</p><div class="actions"><button id="export-cloud">Export cloud copy</button><button id="use-cloud">Use cloud copy</button><button id="use-local">Use this device’s copy</button></div><p class="muted">Choosing a copy replaces the entire tracker. Export both copies first if you need to combine changes.</p></div>
+</div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
+<section id="sticky-client" aria-label="Condensed client header and service balances" hidden>
+  <div class="sticky-identity"><button id="sticky-clients-menu" aria-label="Open client navigation">☰</button><div class="sticky-client-name"><strong id="sticky-client-code"></strong><span id="sticky-client-month"></span></div></div>
+  <div id="sticky-service-rings" aria-label="Remaining authorization hours"></div>
+</section>
+<section id="sticky-global" aria-label="Condensed tracker header" hidden>
+  <button id="sticky-global-menu" aria-label="Open client navigation">☰</button>
+  <div class="sticky-global-title"><strong id="sticky-global-heading">Monthly overview</strong><span id="sticky-global-subtitle">November 2026</span></div>
+  <button id="sticky-global-sync" type="button" aria-label="View synchronization status"><span class="sync-led" aria-hidden="true"></span><span id="sticky-global-status">Not connected</span></button>
+</section>
+<main>
+<p id="notice" role="status"></p>
+
+<section class="overview" id="overview-section"><div class="line overview-title section-head"><h2 id="month-heading">This month</h2><label class="month-picker"><span class="sr-only">View month</span><select id="month"></select></label></div>
+<div class="metrics" id="metrics"></div><p class="muted summary-note">Monthly totals use the selected month. Full-period services have a separate balance.</p></section>
+<section id="visual-section" class="visual-grid"><article><div class="line"><h3>Monthly allowance</h3><span class="pill">Monthly services</span></div><div id="overall-ring"></div><p class="muted">Full-period authorizations are tracked separately.</p></article><article><h3>Hours by service</h3><p class="muted">Logged against the selected month’s allowance</p><div id="service-bars" class="stats"></div></article></section>
+<section id="client-directory"><div class="line section-head"><div><p class="eyebrow">FAMILIAR FACES, CLEAR BALANCES</p><h2>Your clients</h2></div><label class="search-label"><span class="sr-only">Search client codes</span><input id="client-search" type="search" placeholder="Find a client…"></label></div><div id="directory-cards" class="cards"></div></section>
+<section id="services-section"><div class="line section-head"><h2>Service balances</h2><select id="filter" aria-label="Filter authorization periods"><option value="all">All periods</option><option value="Active">Active only</option><option value="Upcoming">Upcoming only</option><option value="Ended">Ended only</option></select></div><div hidden id="client-nav" class="actions client-nav" aria-label="Jump to client"></div><div id="cards"></div></section>
+<section id="logs-section"><div class="line section-head"><h2>Session log</h2><select id="log-filter" aria-label="Filter supervision log by authorization"></select></div><div id="logs"></div></section>
+<footer><div class="actions"><button id="export">Export backup</button><button id="import">Import backup</button><button id="recover">Recover local data</button><input type="file" id="backup-file" accept=".json,application/json" hidden></div><p class="muted hint">Keep a downloaded backup in Files or iCloud Drive. Local recovery copies cannot survive cleared browser data. <span id="backup-status">No backup downloaded in this browser yet.</span></p></footer>
+</main>
+<dialog id="sync-dialog"><form id="sync-form">
+<h2>Private sync</h2><p class="muted">Connect your own Supabase project. Sign in on each device with the same account. Your password is not saved.</p>
+<details id="connection-fields"><summary>Connection settings</summary>
+<label>Supabase project URL<input name="url" type="url" placeholder="https://your-project.supabase.co" required></label>
+<label>Publishable key<input name="publicKey" autocomplete="off" placeholder="sb_publishable_…" required></label>
+<p class="muted">Use a publishable key or legacy anon key. Never enter a secret or service-role key.</p></details>
+<label>Email<input name="email" type="email" autocomplete="username" required></label>
+<label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+<p class="error" role="alert" id="sync-error"></p>
+<div class="actions"><button class="primary" id="connect">Sign in &amp; sync</button><button type="button" id="signout">Sign out</button><button type="button" data-close>Close</button></div>
+<p class="muted">Sign-out ends this tab’s session. Local entries stay on this device. Use only your own devices.</p>
+</form></dialog>
+<dialog id="recovery-dialog"><h2>Local recovery</h2><p class="muted">Download a copy, inspect it, then use Import backup to restore it.</p><div id="recovery-list" class="stats"></div><button type="button" id="export-raw">Download raw local data</button><button type="button" data-close>Close</button></dialog>
+<dialog id="auth-dialog"><form id="auth-form">
+<h2>Authorization</h2>
+<label>Client code<input name="client" maxlength="30" placeholder="e.g., Client A" required></label>
+<div class="pair"><label>Start date<input type="date" name="start" required></label><label>End date<input type="date" name="end" required></label></div>
+<label>Service<select name="service" required><option value="BCBA supervision">BCBA supervision</option><option value="Caregiver training">Caregiver training</option><option value="Direct ABA">Direct ABA</option><option value="Reassessment">Reassessment</option><option value="Other">Other</option></select></label>
+<label>Hours apply to<select name="basis" required><option value="monthly">Each calendar month</option><option value="period">The full authorization period</option></select></label>
+<label>Authorized hours<input type="number" name="hours" min="0.02" max="100000" step="0.01" required></label>
+<p class="error" role="alert"></p><div class="actions"><button class="primary">Save authorization</button><button type="button" data-close>Cancel</button></div>
+</form></dialog>
+<dialog id="log-dialog"><form id="log-form">
+<h2>Service entry</h2>
+<label>Authorization period<select name="auth" required></select></label>
+<label>Contact type<select name="contact"><option value="">Unclassified</option><option value="direct">Direct</option><option value="indirect">Indirect</option></select></label>
+<label id="modality-field" style="display:none">Delivery method<select name="modality" disabled><option value="">Unspecified</option><option value="in-person">In person</option><option value="telehealth">Telehealth</option></select></label>
+<label>Session date<input type="date" name="date" required></label>
+<label>Provider name (optional)<input name="provider" placeholder="e.g., J. Smith"></label>
+<label>Session minutes<input type="number" name="minutes" min="1" max="1440" step="1" placeholder="e.g., 75" required></label>
+<p class="error" role="alert"></p><div class="actions"><button class="primary">Save entry</button><button type="button" data-close>Cancel</button></div>
+</form></dialog>
+<button id="quick-log" class="primary">＋ Log time</button>
+<script>// Fictional records only. Isolated storage: never reads the real tracker's data.
+try {
+ if(!localStorage.getItem('garden-preview-legacy')&&!localStorage.getItem('garden-preview-safe-v1')){
+ const now=new Date(),year=now.getFullYear(),month=String(now.getMonth()+1).padStart(2,'0'),prefix=year+'-'+month;
+ const end=new Date(year,now.getMonth()+1,0).getDate();
+ const auth=[],logs=[];
+ [['AlBe',10,6,4],['CaDe',12,8,2],['ElFi',8,4,3],['GiHa',10,5,4]].forEach(([client,limit,used,care],i)=>{
+  [['BCBA supervision',limit,used],['Caregiver training',4,care],['Direct ABA',40,18+i*4]].forEach(([service,hours,total],j)=>{
+   const id='demo-'+i+'-'+j;auth.push({id,client,service,hours,basis:'monthly',start:prefix+'-01',end:prefix+'-'+end});
+   for(let k=0;k<Math.ceil(total/2);k++)logs.push({id:id+'-'+k,auth:id,date:prefix+'-'+String(Math.min(2+k*2,end)).padStart(2,'0'),minutes:Math.min(2,total-k*2)*60,contact:k%2?'indirect':'direct',modality:'telehealth'});
+  });
+ });
+ auth.push({id:'demo-period',client:'CaDe',service:'Reassessment',hours:6,basis:'period',start:prefix+'-01',end:year+'-12-31'});
+ localStorage.setItem('garden-preview-legacy',JSON.stringify({version:7,auth,logs}));
+ }
+}catch{}
+</script><script>let navClient=null, gardenView='overview';
+// Preview-only appearance preferences, separate from session and authorization data.
+const clientPalette=['#ad5f4d','#597f9f','#b58a27','#8c6b9e','#4e8c82','#bb7186','#778440','#a8754b','#6374ae','#9b635e','#477d99','#8b7840'];
+let clientColors={};try{clientColors=JSON.parse(localStorage.getItem('garden-preview-colors'))||{};}catch{}
+function clientColor(code){
+ if(!clientColors[code]){
+  const assigned=new Set(Object.values(clientColors));
+  clientColors[code]=clientPalette.find(c=>!assigned.has(c)) || 'hsl('+Math.round(Object.keys(clientColors).length*137.508%360)+' 40% 43%)';
+  try{localStorage.setItem('garden-preview-colors',JSON.stringify(clientColors));}catch{}
+ }
+ return clientColors[code];
+}
+function clientsAZ(){return [...new Set(state.auth.map(a=>a.client))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));}
+function goGarden(view,client=null){gardenView=view;navClient=client;$('log-filter').value='';setGardenDrawer(false);render();window.scrollTo({top:0,behavior:'instant'});}
+function progressLine(value,limit,color){const track=el('div',undefined,'track');const fill=el('div',undefined,'fill');fill.style.width=Math.min(100,limit?value/limit*100:0)+'%';fill.style.background=color;track.append(fill);track.setAttribute('role','progressbar');track.setAttribute('aria-valuenow',Math.min(100,Math.round(limit?value/limit*100:0)));track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-label',hours(value)+' of '+hours(limit));return track;}
+function paintGarden(){
+ const month=$('month').value,clients=clientsAZ();
+ if(navClient&&!clients.includes(navClient)){navClient=null;gardenView='overview';}
+ $('page-title').textContent=navClient?navClient:gardenView==='sessions'?'Session log':'Hello!';
+ $('page-subtitle').textContent=navClient?'Client summary':gardenView==='sessions'?'All recorded sessions':'Monthly overview';
+ $('overview-nav').classList.toggle('selected',gardenView==='overview');$('sessions-nav').classList.toggle('selected',gardenView==='sessions');
+ $('overview-nav').setAttribute('aria-current',gardenView==='overview'?'page':'false');$('sessions-nav').setAttribute('aria-current',gardenView==='sessions'?'page':'false');
+ const side=$('side-clients');side.replaceChildren();
+ for(const client of clients){const b=button(client,()=>goGarden('client',client));b.className='nav-item client-tab'+(navClient===client?' selected':'');b.style.setProperty('--client',clientColor(client));b.setAttribute('aria-current',navClient===client?'page':'false');b.append(el('span','Client summary','nav-subtitle'));side.append(b);}
+ $('overview-section').hidden=gardenView==='sessions';$('metrics').hidden=!!navClient;$('overview-section').querySelector('.summary-note').hidden=!!navClient;
+ $('month-heading').textContent=navClient?'Review month':'This month';
+ $('visual-section').hidden=gardenView!=='overview';$('client-directory').hidden=gardenView!=='overview';$('services-section').hidden=gardenView!=='client';$('logs-section').hidden=gardenView==='overview';
+ document.querySelectorAll('.client-section').forEach(g=>{g.hidden=g.dataset.client!==navClient;g.style.setProperty('--client',clientColor(g.dataset.client));});
+ $('client-nav').hidden=true;
+ const active=state.auth.filter(a=>monthly(a)&&coversMonth(a,month));const limit=active.reduce((s,a)=>s+a.hours,0),total=active.reduce((s,a)=>s+used(a.id,month),0);
+ const ring=$('overall-ring');ring.replaceChildren();if(limit)ring.append(balance(total,limit));else ring.append(el('p','No monthly allowances in this month.','muted'));
+ const bars=$('service-bars');bars.replaceChildren();const colors=['#8b6f9f','#bd8e29','#6186a1','#b46352'];
+ serviceNames.forEach((name,i)=>{const a=active.filter(a=>serviceName(a)===name);if(!a.length)return;const allowance=a.reduce((s,a)=>s+a.hours,0),logged=a.reduce((s,a)=>s+used(a.id,month),0);const item=el('div',undefined,'service-bar');const line=el('div',undefined,'line');line.append(el('strong',name),el('small',hours(logged)+' / '+hours(allowance)));item.append(line,progressLine(logged,allowance,colors[i%colors.length]));if(logged>allowance)item.append(el('small',hours(logged-allowance)+' over allowance','error'));bars.append(item);});
+ paintDirectory();
+ paintStickyClient();
+ updateStickyClient();
+ // Keep client recognition visible while editing a session.
+ const auth=state.auth.find(a=>a.id===logForm.elements.auth.value);$('log-dialog').style.setProperty('--client',auth?clientColor(auth.client):'#759785');
+}
+function paintDirectory(){
+ const target=$('directory-cards');target.replaceChildren();const month=$('month').value,query=$('client-search').value.toLowerCase();
+ for(const client of clientsAZ().filter(c=>c.toLowerCase().includes(query))){const periods=state.auth.filter(a=>a.client===client),active=periods.filter(a=>monthly(a)&&coversMonth(a,month));const limit=active.reduce((s,a)=>s+a.hours,0),logged=active.reduce((s,a)=>s+used(a.id,month),0),remaining=active.reduce((s,a)=>s+Math.max(0,a.hours-used(a.id,month)),0);const card=el('article',undefined,'directory-card');card.style.setProperty('--client',clientColor(client));const line=el('div',undefined,'line');const badge=el('span',client,'client-badge');line.append(badge,el('small',periods.length+' services'));card.append(line,el('h3',client),el('p',limit?hours(remaining)+' remaining this month':'No monthly allowance in view','muted'),progressLine(logged,limit,clientColor(client)),el('small',hours(logged)+' logged / '+hours(limit)+' monthly allowance'));const over=active.filter(a=>used(a.id,month)>a.hours);if(over.length)card.append(el('span',over.length+' service over allowance','pill warn'));if(periods.some(a=>!monthly(a)))card.append(el('small','Also has full-period services'));const b=button('View client',()=>goGarden('client',client));b.className='view-client';card.append(b);target.append(card);}
+ if(!target.children.length)target.append(el('p','No clients match your search.','empty'));
+}
+const compactGarden = matchMedia('(max-width: 960px)');
+function setGardenDrawer(open,restoreFocus=false){
+ open=Boolean(open&&compactGarden.matches);
+ $('sidebar').classList.toggle('open',open);
+ $('drawer-shade').hidden=!open;
+ $('mobile-menu').setAttribute('aria-expanded',String(open));
+ document.body.classList.toggle('drawer-open',open);
+ for(const node of [document.querySelector('header'),document.querySelector('main'),$('quick-log'),$('sticky-client')])node.inert=open;
+ if(open){$('sidebar').setAttribute('role','dialog');$('sidebar').setAttribute('aria-modal','true');$('sidebar').setAttribute('aria-label','Client navigation');$('sidebar-close').focus();}
+ else{$('sidebar').removeAttribute('role');$('sidebar').removeAttribute('aria-modal');if(restoreFocus&&compactGarden.matches)$('mobile-menu').focus();}
+}
+function initializeGarden(){
+ $('new-client').onclick=()=>{setGardenDrawer(false);openAuth();};
+ $('overview-nav').onclick=()=>goGarden('overview');$('sessions-nav').onclick=()=>goGarden('sessions');$('client-search').oninput=paintDirectory;
+ $('mobile-menu').onclick=()=>setGardenDrawer(!$('sidebar').classList.contains('open'));
+ $('sidebar-close').onclick=()=>setGardenDrawer(false,true);
+ $('drawer-shade').onclick=()=>setGardenDrawer(false,true);
+ compactGarden.addEventListener('change',()=>setGardenDrawer(false));
+ document.addEventListener('keydown',e=>{
+  if(!$('sidebar').classList.contains('open'))return;
+  if(e.key==='Escape'){e.preventDefault();setGardenDrawer(false,true);}
+  if(e.key==='Tab'){
+   const buttons=[...$('sidebar').querySelectorAll('button')].filter(b=>b.getClientRects().length&&!b.disabled);
+   const first=buttons[0],last=buttons[buttons.length-1];
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+ });
+ $('add-log').onclick=$('quick-log').onclick=()=>{const a=navClient?state.auth.find(a=>a.client===navClient&&coversMonth(a,$('month').value)):null;openLog(a?.id);};
+ const oldOpenLog=openLog;openLog=(authId,entry)=>{oldOpenLog(authId,entry);const a=state.auth.find(a=>a.id===logForm.elements.auth.value);$('log-dialog').style.setProperty('--client',a?clientColor(a.client):'#759785');};
+ const oldChange=logForm.elements.auth.onchange;logForm.elements.auth.onchange=()=>{oldChange();const a=state.auth.find(a=>a.id===logForm.elements.auth.value);$('log-dialog').style.setProperty('--client',a?clientColor(a.client):'#759785');};
+ paintGarden();
+}
+
+// Fixed summary leaves the original header in flow, so shrinking cannot move the page.
+// This fixed, matching surface takes over as the expanded header scrolls away.
+// Keeping the original header in flow avoids jumps or oscillation at the threshold.
+function updateStickyClient(){
+  const topLog=$('add-log'),rect=topLog.getBoundingClientRect();
+  $('quick-log').hidden=rect.width>0&&rect.bottom>0&&rect.top<innerHeight;
+  const collapsed=document.querySelector('header').getBoundingClientRect().bottom<=0;
+  $('sticky-client').hidden=!(collapsed&&navClient);
+  $('sticky-global').hidden=!(collapsed&&!navClient);
+  if(collapsed&&!navClient){
+    $('sticky-global-heading').textContent=gardenView==='sessions'?'Session log':'Monthly overview';
+    $('sticky-global-subtitle').textContent=monthText($('month').value);
+    const status=$('sync-indicator');
+    $('sticky-global-sync').style.setProperty('--signal',getComputedStyle(status).getPropertyValue('--signal'));
+    $('sticky-global-status').textContent=$('sync-status').textContent;
+  }
+}
+
+const ringShortNames={'BCBA supervision':'BCBA Sup.','Caregiver training':'Caregiver','Direct ABA':'Direct ABA','Reassessment':'Reassess.','Other':'Other'};
+function stickyRing(auth,month){
+  const total=usage(auth,month),allowance=auth.hours,remaining=allowance-total;
+  const over=remaining<-.000001,complete=!over&&Math.abs(remaining)<.000001;
+  const color=over?'#b46332':complete?'#52845c':clientColor(auth.client);
+  const shortName=ringShortNames[serviceName(auth)]||serviceName(auth);
+  const basis=monthly(auth)?'Monthly':'Full period';
+  const item=el('div',undefined,'sticky-ring');
+  item.classList.toggle('ring-over',over);
+  const pretty=(val)=>Number(Math.abs(val).toFixed(2)).toLocaleString()+'h';
+  const visibleValue=pretty(remaining);
+  item.title=serviceName(auth)+' · '+basis+' · '+hours(total)+' logged / '+hours(allowance)+' authorized · '+hours(Math.abs(remaining))+(over?' over':' remaining')+' · '+dateText(auth.start)+' – '+dateText(auth.end);
+  item.setAttribute('role','img');item.setAttribute('aria-label',item.title);
+  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 64 64');svg.classList.add('sticky-ring-visual');svg.setAttribute('aria-hidden','true');
+  function svgNode(tag,attrs,content){const node=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));if(content!==undefined)node.textContent=content;return node;}
+  const circumference=2*Math.PI*24,ratio=Math.min(1,Math.max(0,allowance?total/allowance:0));
+  svg.append(svgNode('circle',{cx:32,cy:32,r:24,fill:'none',stroke:'#e7e0d6','stroke-width':6}));
+  svg.append(svgNode('circle',{cx:32,cy:32,r:24,fill:'none',stroke:color,'stroke-width':6,'stroke-linecap':'round','stroke-dasharray':(ratio*circumference).toFixed(2)+' '+circumference.toFixed(2),transform:'rotate(-90 32 32)'}));
+  svg.append(svgNode('text',{x:32,y:33,'text-anchor':'middle','font-size':visibleValue.length>5?11:13,'font-weight':750,fill:over?'#9b4830':'#443e39'},visibleValue));
+  svg.append(svgNode('text',{x:32,y:44,'text-anchor':'middle','font-size':9,fill:over?'#9b4830':'#746d65'},over?'over':complete?'used':'left'));
+  item.append(svg,el('span',shortName,'sticky-ring-label'));
+  if(!monthly(auth))item.append(el('small','Full period','sticky-ring-period'));
+  return item;
+}
+function paintStickyClient(){
+  const panel=$('sticky-client'),target=$('sticky-service-rings');target.replaceChildren();
+  if(!navClient){panel.hidden=true;updateStickyClient();return;}
+  panel.style.setProperty('--client',clientColor(navClient));
+  $('sticky-client-code').textContent=navClient;
+  $('sticky-client-month').textContent=monthText($('month').value);
+  const services=state.auth.filter(a=>a.client===navClient&&coversMonth(a,$('month').value));
+  panel.classList.toggle('many-services',services.length>=4);
+  for(const auth of services)target.append(stickyRing(auth,$('month').value));
+  if(!services.length)target.append(el('small','No services for this month.','sticky-no-services'));
+  updateStickyClient();
+}
+window.addEventListener('scroll',updateStickyClient,{passive:true});
+window.addEventListener('resize',updateStickyClient);
+document.addEventListener('DOMContentLoaded',()=>{
+ $('sticky-clients-menu').onclick=()=>setGardenDrawer(true);
+  $('sticky-global-menu').onclick=()=>setGardenDrawer(true);
+  $('sticky-global-sync').onclick=()=>{window.scrollTo({top:0,behavior:'instant'});$('header-sync').open=true;$('header-sync').querySelector('summary').focus();};
+  new MutationObserver(updateStickyClient).observe($('sync-status'),{childList:true,characterData:true,subtree:true});
+});
+</script><script>'use strict';
+const TrackerCore = (() => {
+  const equal = (a,b) => stable(a) === stable(b);
+  function stable(value) {
+    if (value === undefined) return 'undefined';
+    if (!value || typeof value !== 'object') return JSON.stringify(value);
+    if (Array.isArray(value)) return '[' + value.map(stable).join(',') + ']';
+    return '{' + Object.keys(value).sort().map(k => JSON.stringify(k)+':'+stable(value[k])).join(',') + '}';
+  }
+  function merge(base,local,remote) {
+    const conflicts = []; const data = {version:7,auth:[],logs:[]};
+    for (const kind of ['auth','logs']) {
+      const maps = [base,local,remote].map(s => new Map(s[kind].map(r=>[r.id,r])));
+      for (const id of new Set(maps.flatMap(m=>[...m.keys()]))) {
+        const [b,l,r] = maps.map(m=>m.get(id));
+        let result;
+        if (equal(l,r)) result=l;
+        else if (equal(l,b)) result=r;
+        else if (equal(r,b)) result=l;
+        else { conflicts.push({kind,id}); continue; }
+        if (result) data[kind].push(result);
+      }
+    }
+    return {data,conflicts};
+  }
+  return {equal,merge};
+})();
+if (typeof module !== 'undefined') module.exports=TrackerCore;
+</script>
+<script>'use strict';
+const storeKey = 'garden-preview-safe-v1';
+const emptyData = () => ({version:7,auth:[],logs:[]});
+let store, storageReady = false, cloudConflict = null, rawRecoveryRequested = false;
+function exclusive(action) {
+  if (!navigator.locks) return Promise.reject(Error('Safe saving requires a current Safari, Chrome, or Edge browser.'));
+  return navigator.locks.request(storeKey,action);
+}
+function readStore() {
+  const raw = localStorage.getItem(storeKey);
+  if (raw !== null) {
+    const s = JSON.parse(raw);
+    if (s.format !== 1 || !valid(s.data) || !valid(s.base) || !Number.isSafeInteger(s.revision) || s.revision < 0 || !Array.isArray(s.backups)) throw Error('Invalid saved data');
+    return s;
+  }
+  const legacy = localStorage.getItem('garden-preview-legacy');
+  const data = legacy === null ? emptyData() : JSON.parse(legacy);
+  if (!valid(data)) throw Error('Invalid earlier data');
+  return {format:1,data:upgrade(data),base:emptyData(),revision:0,owner:null,endpoint:null,backups:[],lastSync:null};
+}
+function snapshots(current) {
+  return [{at:new Date().toISOString(),data:current.data},...current.backups].slice(0,8);
+}
+function writeStore(next) {
+  if (!valid(next.data) || !valid(next.base)) throw Error('Invalid records; saving stopped.');
+  const raw = JSON.stringify(next);
+  try { localStorage.setItem(storeKey,raw); }
+  catch { throw Error('This device could not save. Free browser storage or export a backup before continuing.'); }
+  store=next; state=next.data; storageSnapshot=raw; storageReady=true;
+}
+function downloadJSON(data,name) {
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  const link=document.createElement('a'); link.href=url; link.download=name; document.body.append(link); link.click(); link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+function backupLabel() {
+  let saved=null; try {saved=localStorage.getItem('supervision-last-export');} catch {}
+  $('backup-status').textContent=saved ? 'Last backup download requested: '+new Date(saved).toLocaleString()+'.' : 'No backup downloaded in this browser yet.';
+}
+function initializeStorageUI() {
+  backupLabel();
+  $('export').onclick=()=>{
+    if(!storageReady) {notice('Saved data is unreadable. Use Recover local data to download the original bytes.');return;}
+    downloadJSON(state,'supervision-backup-'+day()+'.json');
+    try {localStorage.setItem('supervision-last-export',new Date().toISOString());} catch {}
+    backupLabel(); notice('Backup download requested. Check Downloads or save it to Files.');
+  };
+  $('import').onclick=()=>$('backup-file').click();
+  $('backup-file').onchange=async event=>{
+    const file=event.target.files[0]; event.target.value=''; if(!file)return;
+    try {
+      if(file.size>10*1024*1024) throw Error('Backup is too large (maximum 10 MB).');
+      const data=JSON.parse(await file.text());
+      if(!valid(data))throw Error('This is not a valid Supervision Tracker backup.');
+      const next=upgrade(data);
+      if(!storageReady) {
+        if(!rawRecoveryRequested)throw Error('Download raw local data from Recover local data first, then import this backup again.');
+        if(!confirm('Confirm you have saved the raw recovery download. Replace unreadable local data with '+next.auth.length+' authorizations and '+next.logs.length+' sessions from this backup?'))return;
+        await exclusive(async()=>{
+          const raw={current:localStorage.getItem(storeKey),legacy:localStorage.getItem('garden-preview-legacy')};
+          localStorage.setItem('supervision-damaged-recovery',JSON.stringify(raw));
+          writeStore({format:1,data:next,base:emptyData(),revision:0,owner:null,endpoint:null,backups:[],lastSync:null});
+        });
+        render();notice('Backup restored. The unreadable original was also preserved locally.');updateSyncStatus();queueSync();return;
+      }
+      if(!confirm('Restore '+next.auth.length+' authorizations and '+next.logs.length+' sessions? This replaces '+state.auth.length+' authorizations and '+state.logs.length+' sessions on this device and will sync to your other device. A local recovery copy is kept.'))return;
+      const error=await save(next,'Backup restored.'); if(error)notice(error);
+    } catch(error){notice(error.message);}
+  };
+  $('recover').onclick=()=>{
+    const list=$('recovery-list');list.replaceChildren();
+    let backups=[];try{backups=readStore().backups;}catch{}
+    for(const entry of backups)if(valid(entry.data))list.append(button(new Date(entry.at).toLocaleString()+' · '+entry.data.logs.length+' sessions',()=>downloadJSON(entry.data,'supervision-recovery-'+entry.at.replace(/[:.]/g,'-')+'.json')));
+    if(!list.children.length)list.append(el('p','No recovery snapshots yet. Snapshots are created before changes.'));
+    $('recovery-dialog').showModal();
+  };
+  $('export-raw').onclick=()=>{
+    try{downloadJSON({current:localStorage.getItem(storeKey),legacy:localStorage.getItem('garden-preview-legacy')},'supervision-raw-recovery.json');rawRecoveryRequested=true;}catch{notice('Browser storage cannot be accessed.');}
+  };
+  if (false && 'serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(()=>notice('Offline app installation was unavailable. Your entries are still saved locally.'));
+  if(navigator.storage?.persist)navigator.storage.persist().catch(()=>{});
+}
+</script>
+<script>// Local-only design preview. These examples never contact Supabase.
+const syncStyles={synced:'Synced',checking:'Checking',syncing:'Syncing',error:'Sync error',conflict:'Sync conflict',offline:'Offline',disconnected:'Not connected'};
+function paintSyncIndicator(status,detail,demo=false){
+ $('sync-indicator').dataset.state=status;
+ $('sync-status').textContent=(demo?'Example: ':'')+syncStyles[status];
+ $('sync-detail').textContent=detail;
+ $('sync-demo-tag').hidden=!demo;
+ const busy=status==='checking'||status==='syncing';
+ $('sync-progress').hidden=!busy;
+ $('sync-progress').setAttribute('aria-label',(demo?'Example: ':'')+syncStyles[status]+' in progress');
+}
+function updateSyncStatus(){
+ const demo=$('sync-demo').value;
+ if(!storageReady){paintSyncIndicator('error','Local saving is blocked. Use Recover local data before making changes.');return;}
+ if(demo){paintSyncIndicator(demo,'Visual example only · sample records · no cloud connection.',true);return;}
+ paintSyncIndicator(navigator.onLine?'disconnected':'offline','Design preview · sample records saved locally. Supabase is not connected.');
+}
+function queueSync(){}
+function initializeSync(){
+ updateSyncStatus();$('sync-now').hidden=true;
+ $('sync-settings').textContent='About this preview';
+ $('sync-settings').onclick=()=>notice('Fictional clients, local saving only. The indicator examples do not sync records.');
+ $('sync-demo').onchange=updateSyncStatus;
+ window.addEventListener('online',updateSyncStatus);window.addEventListener('offline',updateSyncStatus);
+}
+</script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const key = 'garden-preview-legacy';
+let state = {version:7,auth: [], logs: []};
+let storageSnapshot = null;
+const authForm = $('auth-form');
+const logForm = $('log-form');
+const notice = message => { $('notice').textContent = message; };
+const day = () => new Date().toLocaleDateString('sv-SE');
+const hours = value => Number(value.toFixed(2)).toLocaleString() + ' h';
+const dateText = value => new Date(value + 'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+const status = auth => day() < auth.start ? 'Upcoming' : day() > auth.end ? 'Ended' : 'Active';
+const within = (date, auth) => date >= auth.start && date <= auth.end;
+const serviceNames = ['BCBA supervision','Caregiver training','Direct ABA','Reassessment','Other'];
+const serviceName = auth => auth.service || 'BCBA supervision';
+const monthly = auth => auth.basis === 'monthly';
+const monthFor = date => date.slice(0,7);
+const coversMonth = (auth,month) => monthFor(auth.start) <= month && month <= monthFor(auth.end);
+const used = (id,month) => state.logs.filter(log => log.auth === id && (!month || monthFor(log.date) === month)).reduce((sum,log) => sum + log.minutes,0) / 60;
+const usage = (auth,month) => used(auth.id,monthly(auth) ? month : null);
+const monthText = month => new Date(month + '-01T12:00:00').toLocaleDateString(undefined,{month:'long',year:'numeric'});
+// Historical entries live only in private backups, not the published app.
+function upgrade(data) { return {...data,version:7}; }
+const modalityLabels = {'':'Unspecified','in-person':'In person',telehealth:'Telehealth'};
+const periodName = auth => auth.client + ' · ' + serviceName(auth) + ' · ' + dateText(auth.start) + ' – ' + dateText(auth.end);
+const id = () => globalThis.crypto?.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2);
+
+function el(tag, content, className) {
+  const node = document.createElement(tag);
+  if (content !== undefined) node.textContent = content;
+  if (className) node.className = className;
+  return node;
+}
+function button(label, action) {
+  const node = el('button',label);
+  node.onclick = action;
+  return node;
+}
+function validDate(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(value + 'T00:00:00Z');
+  return Number.isFinite(+parsed) && parsed.toISOString().slice(0,10) === value;
+}
+function valid(data) {
+  const validId = item => item && typeof item.id === 'string' && item.id.length > 0;
+  if (!data || (data.version !== undefined && data.version !== 2 && data.version !== 3 && data.version !== 4 && data.version !== 5 && data.version !== 6 && data.version !== 7) || !Array.isArray(data.auth) || !Array.isArray(data.logs)) return false;
+  if (!data.auth.every(a => validId(a) && typeof a.client === 'string' && a.client.trim() && a.client.length <= 30
+    && (a.service === undefined || serviceNames.includes(a.service)) && (a.basis === undefined || ['monthly','period'].includes(a.basis))
+    && (a.note === undefined || typeof a.note === 'string') && validDate(a.start) && validDate(a.end) && a.start <= a.end && Number.isFinite(a.hours) && a.hours >= .02 && a.hours <= 100000)) return false;
+  const periods = new Map(data.auth.map(a => [a.id,a]));
+  return periods.size === data.auth.length && data.logs.every(l => validId(l) && periods.has(l.auth) && validDate(l.date)
+    && (l.contact === undefined || ['', 'direct', 'indirect'].includes(l.contact)) && (l.modality === undefined || Object.hasOwn(modalityLabels,l.modality)) && (l.provider === undefined || typeof l.provider === 'string') && within(l.date,periods.get(l.auth)) && Number.isInteger(l.minutes) && l.minutes >= 1 && l.minutes <= 1440)
+    && new Set(data.logs.map(l => l.id)).size === data.logs.length;
+}
+function load() {
+  try {
+    store = readStore();
+    state = store.data;
+    storageSnapshot = JSON.stringify(store);
+    storageReady = true;
+    return true;
+  } catch {
+    storageReady = false;
+    notice('Saved data could not be opened. Changes are blocked to protect it. Use Recover local data or import a valid backup.');
+    return false;
+  }
+}
+async function save(next, message) {
+  if (!valid(next)) return 'The change contains invalid records.';
+  const expectedSnapshot = storageSnapshot;
+  try {
+    await exclusive(async () => {
+      if (!storageReady) throw Error('Saving is blocked because local data could not be read.');
+      const current = readStore();
+      if (JSON.stringify(current) !== expectedSnapshot) {
+        load(); render();
+        throw Error('Entries changed in another tab. Review the latest entries and try again.');
+      }
+      writeStore({...current,data:next,backups:snapshots(current)});
+    });
+    render(); notice(message + ' Saved on this device.');
+    updateSyncStatus(); queueSync();
+    return '';
+  } catch (error) { return error.message || 'Unable to save on this device. Export a backup.'; }
+}
+function setOptions(select, periods, placeholder) {
+  const previous = select.value;
+  select.replaceChildren(new Option(placeholder,''));
+  for (const auth of periods) select.add(new Option(periodName(auth),auth.id));
+  if (periods.some(auth => auth.id === previous)) select.value = previous;
+}
+const supervisionColors = {direct:'#779d84',indirect:'#8d80af',unclassified:'#b48a63',remaining:'#e8e9e1'};
+function supervisionFill(split,limit) {
+  const total = split.direct + split.indirect + split.unclassified;
+  const scale = 100 / Math.max(total,limit);
+  const directEnd = split.direct * scale;
+  const indirectEnd = (split.direct + split.indirect) * scale;
+  const usedEnd = Math.min(100,total * scale);
+  return `conic-gradient(${supervisionColors.direct} 0% ${directEnd}%, ${supervisionColors.indirect} ${directEnd}% ${indirectEnd}%, ${supervisionColors.unclassified} ${indirectEnd}% ${usedEnd}%, ${supervisionColors.remaining} ${usedEnd}% 100%)`;
+}
+function donut(total,limit,split) {
+  const percent = total / limit * 100;
+  const ring = el('div',undefined,'donut' + (total - limit > 0.000001 ? ' over' : percent >= 100 ? ' complete' : ''));
+  ring.style.setProperty('--pct',Math.min(100,percent) + '%');
+  if (split) ring.style.background = supervisionFill(split,limit);
+  ring.append(el('strong',Math.round(percent) + '%'));
+  ring.setAttribute('aria-label',Math.round(percent) + '% used');
+  return ring;
+}
+function balance(total,limit,split) {
+  const diff = limit - total;
+  const over = diff < -0.000001;
+  const row = el('div',undefined,'donut-row');
+  const stats = el('div',undefined,'stats');
+  stats.append(el('strong',hours(total) + ' / ' + hours(limit)),el('span',hours(Math.abs(diff)) + (over ? ' over target' : ' remaining'),over ? 'pill warn' : 'muted'));
+  row.append(donut(total,limit,split),stats);
+  return row;
+}
+function supervisionHours(auth,month) {
+  const split = {direct:0,indirect:0,unclassified:0};
+  for (const log of state.logs) {
+    if (log.auth !== auth.id || (monthly(auth) && monthFor(log.date) !== month)) continue;
+    split[log.contact || 'unclassified'] += log.minutes;
+  }
+  for (const contact of Object.keys(split)) split[contact] /= 60;
+  return split;
+}
+function supervisionDelivery(auth,month) {
+  const totals = {'in-person':0,telehealth:0,'':0};
+  for (const log of state.logs) {
+    if (log.auth === auth.id && (!monthly(auth) || monthFor(log.date) === month)) {
+      totals[log.modality || ''] += log.minutes;
+    }
+  }
+  return Object.entries(totals).map(([modality,minutes]) => modalityLabels[modality] + ' ' + hours(minutes / 60)).join(' · ');
+}
+function supervisionMix(auth,month,split) {
+  const total = split.direct + split.indirect + split.unclassified;
+  const mix = el('div',undefined,'stats');
+  const key = el('div',undefined,'donut-key');
+  const segments = [['direct','Direct',split.direct],['indirect','Indirect',split.indirect]];
+  if (split.unclassified) segments.push(['unclassified','Unclassified',split.unclassified]);
+  if (total < auth.hours) segments.push(['remaining','Remaining',auth.hours - total]);
+  for (const [contact,label,value] of segments) {
+    const item = el('small');
+    const swatch = el('span',undefined,'donut-swatch');
+    swatch.style.backgroundColor = supervisionColors[contact];
+    swatch.setAttribute('aria-hidden','true');
+    item.append(swatch,el('span',label + ' ' + hours(value)));
+    key.append(item);
+  }
+  mix.append(key,el('small',supervisionDelivery(auth,month)));
+  if (total) mix.append(el('small',Math.round(split.indirect / total * 100) + '% of logged supervision marked indirect'));
+  if (monthly(auth)) {
+    const treatment = state.auth.filter(a => a.client === auth.client && serviceName(a) === 'Direct ABA')
+      .reduce((sum,a) => sum + used(a.id,month),0);
+    const ratio = treatment ? Math.round(total / treatment * 100) + '% case supervision relative to ' + hours(treatment) + ' of logged 1:1 ABA'
+      : 'Supervision ratio available when 1:1 ABA hours are logged';
+    mix.append(el('small',ratio));
+  }
+  return mix;
+}
+function* monthsInPeriod(auth) {
+  const date = new Date(monthFor(auth.start) + '-01T12:00:00Z');
+  const last = monthFor(auth.end);
+  while (date.getUTCFullYear() <= 9999) {
+    const month = date.toISOString().slice(0,7);
+    if (month > last) break;
+    yield month;
+    date.setUTCMonth(date.getUTCMonth() + 1);
+  }
+}
+function periodHistory(auth,selectedMonth,ids = [auth.id]) {
+  const total = month => ids.reduce((sum,id) => sum + used(id,month),0);
+  const details = el('details',undefined,'period-history');
+  details.append(el('summary','Full period · ' + hours(total()) + ' logged'));
+  const frame = el('div',undefined,'scroll');
+  const table = el('table');
+  const header = table.createTHead().insertRow();
+  const headings = monthly(auth) ? ['Month','Logged','Balance'] : ['Month','Logged'];
+  for (const heading of headings) {
+    const cell = el('th',heading);
+    cell.scope = 'col';
+    header.append(cell);
+  }
+  const body = table.createTBody();
+  for (const month of monthsInPeriod(auth)) {
+    const row = body.insertRow();
+    if (month === selectedMonth) row.className = 'selected-month';
+    const logged = total(month);
+    row.insertCell().textContent = monthText(month);
+    row.insertCell().textContent = hours(logged);
+    if (monthly(auth)) {
+      const remaining = auth.hours - logged;
+      row.insertCell().textContent = hours(Math.abs(remaining)) + (remaining < -0.000001 ? ' over' : ' left');
+    }
+  }
+  frame.append(table);
+  details.append(frame);
+  return details;
+}
+function updateReviewMonths() {
+  const select = $('month');
+  const current = monthFor(day());
+  const selected = select.value || current;
+  const months = new Set([current,selected]);
+  for (const auth of state.auth) {
+    for (const month of monthsInPeriod(auth)) months.add(month);
+  }
+  select.replaceChildren(...Array.from(months).sort().reverse().map(month => new Option(monthText(month),month)));
+  select.value = selected;
+}
+function updateSessionDates(preferred) {
+  const input = logForm.elements.date;
+  const auth = state.auth.find(period => period.id === logForm.elements.auth.value);
+  input.disabled = !auth;
+  input.min = auth?.start || ''; input.max = auth?.end || '';
+  const today = day();
+  input.value = auth && preferred && within(preferred,auth) ? preferred : auth && within(today,auth) && monthFor(today) === $('month').value ? today : '';
+}
+function render() {
+  updateReviewMonths();
+  const month = $('month').value || monthFor(day());
+  const active = state.auth.filter(a => coversMonth(a,month));
+  const monthlyServices = active.filter(monthly);
+  const metrics = $('metrics');
+  metrics.replaceChildren();
+  const summary = [
+    ['Clients in month',new Set(active.map(a => a.client)).size],
+    ['Monthly hours authorized',hours(monthlyServices.reduce((total,a) => total + a.hours,0))],
+    ['Monthly hours logged',hours(monthlyServices.reduce((total,a) => total + usage(a,month),0))],
+    ['Monthly hours remaining',hours(monthlyServices.reduce((total,a) => total + Math.max(0,a.hours - usage(a,month)),0))]
+  ];
+  for (const [label,value] of summary) {
+    const tile = el('div',undefined,'metric');
+    tile.append(el('span',label,'muted'),el('strong',value));
+    metrics.append(tile);
+  }
+  const periods = [...state.auth].sort((a,b) => a.client.localeCompare(b.client) || b.start.localeCompare(a.start) || serviceNames.indexOf(serviceName(a)) - serviceNames.indexOf(serviceName(b)));
+  setOptions($('log-filter'),periods.filter(a=>!navClient||a.client===navClient),navClient?'All services for '+navClient:'All services and periods');
+  const container = $('cards');
+  const nav = $('client-nav');
+  container.replaceChildren();
+  nav.replaceChildren();
+  const filter = $('filter').value;
+  const visible = periods.filter(a => filter === 'all' || filter === status(a));
+  for (const client of new Set(visible.map(a => a.client))) {
+    const group = el('div',undefined,'client-section');
+    group.dataset.client = client;
+    const heading = el('div',undefined,'client-heading line');
+    heading.tabIndex = -1;
+    heading.append(el('h3',client),button('Add service',() => openAuth(undefined,client)));
+    nav.append(button(client,() => { heading.focus(); heading.scrollIntoView({block:'start'}); }));
+    const cards = el('div',undefined,'cards');
+    const services = visible.filter(a => a.client === client);
+    for (const auth of services) {
+      const card = el('article');
+      const cardHeading = el('div',undefined,'line');
+      cardHeading.append(el('h4',serviceName(auth)),el('span',status(auth),'pill'));
+      cardHeading.firstChild.style.margin = '0';
+      const actions = el('div',undefined,'actions');
+      actions.append(button('Log time',() => openLog(auth.id)),button('Edit',() => openAuth(auth)),button('View log',() => {
+        $('log-filter').value = auth.id;
+        renderLogs();
+        $('log-filter').focus();
+      }));
+      if (!state.logs.some(log => log.auth === auth.id)) actions.append(button('Delete period',async () => {
+        if (confirm('Delete this service authorization?')) {
+          const error = await save({...state,auth:state.auth.filter(a => a.id !== auth.id)},'Authorization deleted.');
+          if (error) notice(error);
+        }
+      }));
+      card.append(cardHeading,el('small',dateText(auth.start) + ' – ' + dateText(auth.end)));
+      if (monthly(auth) && !coversMonth(auth,month)) {
+        card.append(el('p',hours(auth.hours) + ' per month · outside ' + monthText(month),'muted'));
+      } else {
+        const split = serviceName(auth) === 'BCBA supervision' ? supervisionHours(auth,month) : null;
+        card.append(el('small',monthly(auth) ? monthText(month) : 'Full authorization period'),balance(usage(auth,month),auth.hours,split));
+        if (split) card.append(supervisionMix(auth,month,split));
+      }
+      card.append(periodHistory(auth,month));
+      if (auth.note) card.append(el('p',auth.note,'muted source-note'));
+      card.append(actions);
+      cards.append(card);
+    }
+    const shared = services.filter(a => ['hrc-maro-supervision','hrc-maro-caregiver'].includes(a.id));
+    if (shared.length === 2 && shared.every(a => monthly(a)) && shared[0].start === shared[1].start && shared[0].end === shared[1].end) {
+      const card = el('article');
+      const combined = {...shared[0],hours:18};
+      card.append(el('h3','Combined BCBA hours'),el('small','Shared order: 18 h/month · supervision and caregiver training'));
+      if (coversMonth(combined,month)) {
+        card.append(el('small',monthText(month)),balance(shared.reduce((sum,a) => sum + usage(a,month),0),18));
+      } else {
+        card.append(el('p','18 h per month · outside ' + monthText(month),'muted'));
+      }
+      card.append(periodHistory(combined,month,shared.map(a => a.id)));
+      cards.append(card);
+    }
+    group.append(heading,cards);
+    container.append(group);
+  }
+  if (!visible.length) container.append(el('p',state.auth.length ? 'No periods match this filter.' : 'Add an authorization to start tracking hours.','empty'));
+  renderLogs();
+  paintGarden();
+}
+function renderLogs() {
+  const target = $('logs');
+  const selected = $('log-filter').value;
+  const entries = state.logs.filter(log => (!selected || log.auth === selected) && (!navClient || state.auth.find(a=>a.id===log.auth)?.client===navClient)).sort((a,b) => b.date.localeCompare(a.date));
+  target.replaceChildren();
+  if (!entries.length) {
+    target.append(el('p','No session entries for this view.','empty'));
+    return;
+  }
+  const table = el('table');
+  const head = table.createTHead().insertRow();
+  for (const label of ['Session date','Authorization period','Time logged','Contact','Delivery method','Provider','Actions']) {
+    const th = el('th',label);
+    th.scope = 'col';
+    head.append(th);
+  }
+  const body = table.createTBody();
+  for (const entry of entries) {
+    const row = body.insertRow();
+    row.insertCell().textContent = dateText(entry.date);
+    row.insertCell().textContent = periodName(state.auth.find(a => a.id === entry.auth));
+    row.insertCell().textContent = entry.minutes + ' min · ' + hours(entry.minutes / 60);
+    row.insertCell().textContent = entry.contact === 'direct' ? 'Direct' : entry.contact === 'indirect' ? 'Indirect' : 'Unclassified';
+    const auth = state.auth.find(period => period.id === entry.auth);
+    row.insertCell().textContent = serviceName(auth) === 'BCBA supervision' ? modalityLabels[entry.modality || ''] : '—';
+    row.insertCell().textContent = entry.provider || '—';
+    const actions = el('div',undefined,'actions');
+    actions.append(button('Edit',() => openLog(entry.auth,entry)),button('Delete',async () => {
+      if (confirm('Delete this session entry?')) {
+        const error = await save({...state,logs:state.logs.filter(l => l.id !== entry.id)},'Session entry deleted.');
+        if (error) notice(error);
+      }
+    }));
+    row.insertCell().append(actions);
+  }
+  for (const row of body.rows) Array.from(row.cells).forEach((cell,i) => cell.dataset.label = head.cells[i].textContent);
+  table.className = 'session-table';
+  const wrapper = el('div',undefined,'scroll');
+  wrapper.append(table);
+  target.append(wrapper);
+}
+function openAuth(auth,client) {
+  authForm.reset();
+  authForm.dataset.id = auth?.id || '';
+  authForm.dataset.original = JSON.stringify(auth || null);
+  authForm.querySelector('.error').textContent = '';
+  if (client) authForm.elements.client.value = client;
+  if (auth) {
+    for (const field of ['client','start','end','hours']) authForm.elements[field].value = auth[field];
+    authForm.elements.service.value = serviceName(auth);
+    authForm.elements.basis.value = monthly(auth) ? 'monthly' : 'period';
+  }
+  $('auth-dialog').showModal();
+}
+function updateModalityField() {
+  const auth = state.auth.find(period => period.id === logForm.elements.auth.value);
+  const enabled = !!auth && serviceName(auth) === 'BCBA supervision';
+  $('modality-field').style.display = enabled ? '' : 'none';
+  logForm.elements.modality.disabled = !enabled;
+  if (!enabled) logForm.elements.modality.value = '';
+}
+function openLog(authId, entry) {
+  if (!state.auth.length) {
+    openAuth();
+    return;
+  }
+  logForm.reset();
+  logForm.dataset.id = entry?.id || '';
+  logForm.dataset.original = JSON.stringify(entry || null);
+  logForm.querySelector('.error').textContent = '';
+  setOptions(logForm.elements.auth,state.auth,'Choose a period');
+  logForm.elements.auth.value = authId || (state.auth.length === 1 ? state.auth[0].id : '');
+  updateSessionDates(entry?.date);
+  logForm.elements.minutes.value = entry?.minutes || '';
+  logForm.elements.contact.value = entry?.contact || '';
+  logForm.elements.modality.value = entry?.modality || '';
+  logForm.elements.provider.value = entry?.provider || '';
+  updateModalityField();
+  $('log-dialog').showModal();
+}
+authForm.onsubmit = async event => {
+  event.preventDefault();
+  const values = new FormData(authForm);
+  const previous = state.auth.find(a => a.id === authForm.dataset.id);
+  if (!TrackerCore.equal(previous || null,JSON.parse(authForm.dataset.original))) { authForm.querySelector('.error').textContent='This authorization changed while you were editing. Close and reopen it to review the latest version.'; return; }
+  const record = {...previous,id:authForm.dataset.id || id(),service:values.get('service'),basis:values.get('basis'),client:values.get('client').trim(),start:values.get('start'),end:values.get('end'),hours:Number(values.get('hours'))};
+  const periods = state.auth.filter(a => a.id !== record.id);
+  const next = {...state,auth:[...periods,record]};
+  const error = authForm.querySelector('.error');
+  if (!record.client) error.textContent = 'Enter a client code.';
+  else if (record.start > record.end) error.textContent = 'The end date must be on or after the start date.';
+  else if (state.logs.some(l => l.auth === record.id && !within(l.date,record))) error.textContent = 'These dates exclude an existing entry. Edit or move that entry before changing the period.';
+  else if (!valid(next)) error.textContent = 'Check the authorization dates and hours.';
+  else if (!(error.textContent = await save(next,'Authorization saved.'))) $('auth-dialog').close();
+};
+logForm.onsubmit = async event => {
+  event.preventDefault();
+  const values = new FormData(logForm);
+  const previous = state.logs.find(log => log.id === logForm.dataset.id);
+  if (!TrackerCore.equal(previous || null,JSON.parse(logForm.dataset.original))) { logForm.querySelector('.error').textContent='This session changed while you were editing. Close and reopen it to review the latest version.'; return; }
+  const entry = {...previous,id:logForm.dataset.id || id(),auth:values.get('auth'),provider:values.get('provider').trim(),contact:values.get('contact'),modality:values.get('modality') || '',date:values.get('date'),minutes:Number(values.get('minutes'))};
+  const next = {...state,logs:[...state.logs.filter(l => l.id !== entry.id),entry]};
+  const error = logForm.querySelector('.error');
+  if (!valid(next)) error.textContent = 'Choose an authorization that includes this session date and enter whole minutes.';
+  else if (!(error.textContent = await save(next,'Session logged.'))) $('log-dialog').close();
+};
+$('add-auth').onclick = () => openAuth();
+$('add-log').onclick = () => openLog();
+logForm.elements.auth.onchange = () => {
+  updateSessionDates(logForm.elements.date.value);
+  updateModalityField();
+};
+$('month').onchange = render;
+$('filter').onchange = render;
+$('log-filter').onchange = renderLogs;
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('dialog').close());
+window.addEventListener('storage',event => {
+  if (event.key === storeKey || event.key === null) { if (load()) render(); updateSyncStatus(); }
+});
+load();
+render();
+initializeStorageUI();
+initializeSync();
+initializeGarden();
+</script>
+</body>
+</html>
