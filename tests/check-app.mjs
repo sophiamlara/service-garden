@@ -10,7 +10,7 @@ test('all embedded application scripts parse',()=>{
 });
 test('single application version',()=>{
  assert.match(html,/<title>ABA Track — v0\.4\.4<\/title>/);
- assert.match(html,/id="app-version"[^>]*>v0\.4\.3/);
+ assert.match(html,/id="app-version"[^>]*>v0\.4\.4/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
 test('management controls exist',()=>{
