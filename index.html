@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Service Garden — v0.3</title>
+<title>Service Garden — v0.4</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Service Garden">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -328,12 +328,30 @@ button{touch-action:manipulation}
 .garden-empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:8px;background:#fffdf8;border:1px dashed #cfbfa6;padding:22px}
 .garden-empty-state .garden-empty-seed{font-size:2rem;line-height:1.1}.garden-empty-state h3{font-size:1.07rem}
 .garden-empty-state .muted{margin:0 0 5px}.garden-empty-state .primary{min-height:44px}
+/* v0.4: client management, gentle achievements and accessible empty states */
+.client-manage-dialog{width:min(96vw,540px);padding:24px}
+.client-form-section{border-top:1px solid #e7dfd3;padding-top:14px;margin-top:14px;display:grid;gap:10px}
+.client-form-section h3{font-size:1rem;margin:0}
+.client-manage-dialog .destructive{color:#9f4338;border-color:#d8a89c;background:#fff5f2}
+.delete-warning{background:#fff1e8;border:1px solid #edcebe;padding:13px;border-radius:13px;display:grid;gap:10px}
+.delete-warning label:has(input[type="checkbox"]){display:flex;gap:10px;align-items:start;font-size:.88rem}
+.delete-warning input[type="checkbox"]{min-height:20px;width:20px;flex:none}
+#archived-client-list{display:grid;gap:8px}
+.archived-client-row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f8f4ed;border:1px solid #e6ddcf;border-radius:12px;padding:10px}
+.garden-achievement{display:flex;align-items:center;gap:10px;background:#eef4e7;color:#356245;border:1px solid #cfe0c8;border-radius:14px;padding:11px 13px;font-size:.85rem}
+.garden-achievement .garden-flower{font-size:1.4rem;animation:garden-bloom .7s ease-out both}
+@keyframes garden-bloom{from{opacity:.55;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.garden-session-empty{max-width:620px;min-height:190px;margin:16px auto}
+.client-heading .actions{display:flex;gap:8px;flex-wrap:wrap}
+.client-heading .actions button{font-size:.85rem}
+@media(max-width:600px){.client-manage-dialog{padding:18px}.client-heading{flex-wrap:wrap}.client-heading .actions{width:100%}}
+@media(prefers-reduced-motion:reduce){.garden-achievement .garden-flower{animation:none}}
 </style>
 </head>
 <body>
-<button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
+<button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><button id="manage-archived" class="nav-item">▤ Archived clients</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
 <header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
-<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.3">v0.3</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.4">v0.4</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
 <div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
 <details class="sync-preview-controls" hidden><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p></p></details><div id="conflict" hidden><p class="error">Both devices changed the same record. Sync has paused; neither copy has been overwritten.</p><div class="actions"><button id="export-cloud">Export cloud copy</button><button id="use-cloud">Use cloud copy</button><button id="use-local">Use this device’s copy</button></div><p class="muted">Choosing a copy replaces the entire tracker. Export both copies first if you need to combine changes.</p></div>
 </div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
@@ -352,14 +370,14 @@ button{touch-action:manipulation}
 <section class="overview" id="overview-section"><div class="line overview-title section-head"><h2 id="month-heading">This month</h2><label class="month-picker"><span class="sr-only">View month</span><select id="month"></select></label></div>
 <div class="metrics" id="metrics"></div><p class="muted summary-note">Monthly totals use the selected month. Full-period services have a separate balance.</p></section>
 <section id="visual-section" class="visual-grid"><article><div class="line"><h3>Monthly allowance</h3><span class="pill">Monthly services</span></div><div id="overall-ring"></div><p class="muted">Full-period authorizations are tracked separately.</p></article><article><h3>Hours by service</h3><p class="muted">Logged against the selected month’s allowance</p><div id="service-bars" class="stats"></div></article></section>
-<section id="client-directory"><div class="line section-head"><div><p class="eyebrow">FAMILIAR FACES, CLEAR BALANCES</p><h2>Your clients</h2></div><label class="search-label"><span class="sr-only">Search client codes</span><input id="client-search" type="search" placeholder="Find a client…"></label></div><div id="directory-cards" class="cards"></div></section>
+<section id="client-directory"><div class="line section-head"><div><p class="eyebrow">FAMILIAR FACES, CLEAR BALANCES</p><h2>Your clients</h2></div><div class="actions"><label class="search-label"><span class="sr-only">Search client codes</span><input id="client-search" type="search" placeholder="Find a client…"></label><button id="manage-archived-directory" type="button">Archived</button></div></div><div id="directory-cards" class="cards"></div></section>
 <section id="services-section"><div class="line section-head"><h2>Service balances</h2><select id="filter" aria-label="Filter authorization periods"><option value="all">All periods</option><option value="Active">Active only</option><option value="Upcoming">Upcoming only</option><option value="Ended">Ended only</option></select></div><div hidden id="client-nav" class="actions client-nav" aria-label="Jump to client"></div><div id="cards"></div></section>
 <section id="logs-section"><div class="line section-head"><h2>Session log</h2><select id="log-filter" aria-label="Filter supervision log by authorization"></select></div><div id="logs"></div></section>
 <footer><div class="actions"><button id="export">Export backup</button><button id="import">Import backup</button><button id="recover">Recover local data</button><input type="file" id="backup-file" accept=".json,application/json" hidden></div><p class="muted hint">Keep a downloaded backup in Files or iCloud Drive. Local recovery copies cannot survive cleared browser data. <span id="backup-status">No backup downloaded in this browser yet.</span></p></footer>
 </main>
 <dialog id="sync-dialog" aria-label="Private device synchronization">
 <div class="garden-sync-dialog">
-<h2>Private device sync <small class="app-version">v0.3</small></h2>
+<h2>Private device sync <small class="app-version">v0.4</small></h2>
 <p class="muted">Pair this browser with your private key. No email address or password is required. Once paired, changes sync automatically when online.</p>
 <p id="garden-beta-warning" class="garden-beta-warning"><strong>Sync verification underway.</strong> Use only fictional test records until Mac and iPhone pairing, synchronization, and revocation are verified.</p>
 <form id="sync-form" autocomplete="off">
@@ -377,6 +395,29 @@ button{touch-action:manipulation}
 <p class="muted" style="font-size:.78rem">The pairing key is not saved in this browser. Keep a separate private copy for your next device. Local entries remain on your device when offline.</p>
 <p class="muted" style="font-size:.78rem"><strong>iPhone Duo:</strong> For the app icon, use Safari’s Share menu → Add to Home Screen → <strong>Open as Web App</strong>. Safari and your Home Screen app each need their own pairing.</p>
 </div>
+</dialog>
+<dialog id="client-manage-dialog" class="client-manage-dialog" aria-labelledby="client-manage-title">
+<h2 id="client-manage-title">Manage client</h2><p class="muted" id="client-manage-summary"></p>
+<section class="client-form-section"><h3>Edit client code</h3>
+<label>Client code<input id="client-manage-code" maxlength="30" autocomplete="off" required></label>
+<button class="primary" id="client-rename" type="button">Save client code</button>
+<p class="muted">Changes the code on all authorizations. Logged sessions stay linked.</p></section>
+<section class="client-form-section"><h3>Archive or restore</h3>
+<p class="muted">Hide a finished client from your active directory without deleting any history. Restore later if services resume.</p>
+<button id="client-archive-toggle" type="button">Archive client</button></section>
+<section class="client-form-section"><h3>Permanent deletion</h3>
+<p class="muted">Deletes all of this client's authorization periods and logged sessions, including across synced devices. Keep a verified backup first.</p>
+<div class="delete-warning">
+<button id="client-backup" type="button">Download full tracker backup</button>
+<label><input type="checkbox" id="client-backup-ack">I saved and checked the backup file.</label>
+<label>Type the exact client code to confirm<input type="text" id="client-delete-confirm" autocomplete="off" spellcheck="false"></label>
+<button id="client-permanent-delete" class="destructive" type="button" disabled>Permanently delete client and sessions</button>
+</div></section>
+<p class="error" id="client-manage-error" role="alert"></p><button type="button" data-close>Close</button>
+</dialog>
+<dialog id="archived-clients-dialog" class="client-manage-dialog" aria-labelledby="archived-clients-title">
+<h2 id="archived-clients-title">Archived clients</h2><p class="muted">Archived clients keep their full histories.</p>
+<div id="archived-client-list"></div><button type="button" data-close>Close</button>
 </dialog>
 <dialog id="recovery-dialog"><h2>Local recovery</h2><p class="muted">Download a copy, inspect it, then use Import backup to restore it.</p><div id="recovery-list" class="stats"></div><button type="button" id="export-raw">Download raw local data</button><button type="button" data-close>Close</button></dialog>
 <dialog id="auth-dialog"><form id="auth-form">
@@ -411,7 +452,75 @@ function clientColor(code){
  }
  return clientColors[code];
 }
-function clientsAZ(){return [...new Set(state.auth.map(a=>a.client))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));}
+function allClientsAZ(){return [...new Set(state.auth.map(a=>a.client))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));}
+function clientRecords(code){return state.auth.filter(a=>a.client===code)}
+function clientIsArchived(code){const records=clientRecords(code);return records.length>0&&records.every(a=>a.archived===true)}
+function clientsAZ(){return allClientsAZ().filter(code=>!clientIsArchived(code))}
+let managedClient=null;
+function gardenClientAchievement(auth,month){
+ const logged=usage(auth,month);
+ if(logged+0.000001<auth.hours||logged>auth.hours+0.000001)return null;
+ const card=el('div',undefined,'garden-achievement');
+ const flower=el('span','🌼','garden-flower');flower.setAttribute('aria-hidden','true');
+ card.append(flower,el('span','Congratulations! You completed your '+(monthly(auth)?monthText(month)+' monthly':'full authorization period')+' hours. Great work!'));return card;
+}
+function showArchivedClients(){
+ const target=$('archived-client-list');target.replaceChildren();
+ const archived=allClientsAZ().filter(clientIsArchived);
+ if(!archived.length)target.append(el('p','No archived clients yet. 🌿','muted'));
+ for(const code of archived){const row=el('div',undefined,'archived-client-row');row.append(el('strong',code),button('Manage / restore',()=>{$('archived-clients-dialog').close();openClientManage(code)}));target.append(row)}
+ $('archived-clients-dialog').showModal();
+}
+function openClientManage(code){
+ const records=clientRecords(code);if(!records.length){notice('Client no longer exists. Refresh to see updated records.');return}
+ managedClient=code;
+ $('client-manage-title').textContent='Manage · '+code;
+ $('client-manage-summary').textContent=records.length+' authorization(s) · '+state.logs.filter(l=>records.some(a=>a.id===l.auth)).length+' session(s)';
+ $('client-manage-code').value=code;$('client-delete-confirm').value='';$('client-backup-ack').checked=false;
+ $('client-permanent-delete').disabled=true;$('client-manage-error').textContent='';
+ $('client-archive-toggle').textContent=clientIsArchived(code)?'Restore client':'Archive client';
+ $('client-manage-dialog').showModal();
+}
+function clientDeleteReady(){return !!managedClient&&$('client-backup-ack').checked&&$('client-delete-confirm').value===managedClient&&clientRecords(managedClient).length>0}
+function initializeClientManagement(){
+ $('manage-archived').onclick=()=>{setGardenDrawer(false);showArchivedClients()};
+ $('manage-archived-directory').onclick=showArchivedClients;
+ $('client-backup').onclick=()=>{try{downloadJSON(state,'service-garden-before-delete-'+day()+'.json');notice('Backup download requested. Verify your copy before confirming.')}catch(e){$('client-manage-error').textContent='Backup could not be downloaded: '+e.message}};
+ $('client-backup-ack').onchange=()=>{$('client-permanent-delete').disabled=!clientDeleteReady()};
+ $('client-delete-confirm').oninput=()=>{$('client-permanent-delete').disabled=!clientDeleteReady()};
+ $('client-rename').onclick=async()=>{
+  const old=managedClient,code=$('client-manage-code').value.trim(),error=$('client-manage-error');error.textContent='';
+  if(!clientRecords(old).length){error.textContent='Client no longer exists.';return}
+  if(!code||code.length>30){error.textContent='Enter a client code of 1–30 characters.';return}
+  if(code!==old&&allClientsAZ().some(c=>c.toLowerCase()===code.toLowerCase())){error.textContent='Another client already uses this code.';return}
+  if(code===old){$('client-manage-dialog').close();return}
+  const next={...state,auth:state.auth.map(a=>a.client===old?{...a,client:code}:a)};
+  const result=await save(next,'Client code updated.');if(result){error.textContent=result;return}
+  if(clientColors[old]&&!clientColors[code]){clientColors[code]=clientColors[old];try{localStorage.setItem('service-garden-v03-beta-colors',JSON.stringify(clientColors))}catch{}}
+  if(navClient===old)navClient=code;
+  $('client-manage-dialog').close();render();
+ };
+ $('client-archive-toggle').onclick=async()=>{
+  const old=managedClient,error=$('client-manage-error');error.textContent='';
+  if(!clientRecords(old).length){error.textContent='Client no longer exists.';return}
+  const archive=!clientIsArchived(old);
+  const next={...state,auth:state.auth.map(a=>a.client===old?{...a,archived:archive}:a)};
+  const result=await save(next,archive?'Client archived; history preserved.':'Client restored.');
+  if(result){error.textContent=result;return}
+  if(archive&&navClient===old){navClient=null;gardenView='overview';render()}
+  $('client-manage-dialog').close();
+ };
+ $('client-permanent-delete').onclick=async()=>{
+  const old=managedClient,error=$('client-manage-error');error.textContent='';
+  if(!clientDeleteReady()){error.textContent='Verify a backup and enter the exact client code.';return}
+  const ids=new Set(clientRecords(old).map(a=>a.id)),count=state.logs.filter(l=>ids.has(l.auth)).length;
+  if(!confirm('Permanently delete '+old+', '+ids.size+' authorizations, and '+count+' sessions across paired devices? This cannot be undone without a backup.'))return;
+  const next={...state,auth:state.auth.filter(a=>!ids.has(a.id)),logs:state.logs.filter(l=>!ids.has(l.auth))};
+  const result=await save(next,'Client and linked records deleted.');if(result){error.textContent=result;return}
+  if(navClient===old){navClient=null;gardenView='overview';render()}
+  $('client-manage-dialog').close();
+ };
+}
 function goGarden(view,client=null){gardenView=view;navClient=client;$('log-filter').value='';setGardenDrawer(false);render();window.scrollTo({top:0,behavior:'instant'});}
 function progressLine(value,limit,color){const track=el('div',undefined,'track');const fill=el('div',undefined,'fill');fill.style.width=Math.min(100,limit?value/limit*100:0)+'%';fill.style.background=color;track.append(fill);track.setAttribute('role','progressbar');track.setAttribute('aria-valuenow',Math.min(100,Math.round(limit?value/limit*100:0)));track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-label',hours(value)+' of '+hours(limit));return track;}
 function paintGarden(){
@@ -440,13 +549,13 @@ function paintGarden(){
 }
 function paintDirectory(){
  const target=$('directory-cards');target.replaceChildren();const month=$('month').value,query=$('client-search').value.toLowerCase();
- for(const client of clientsAZ().filter(c=>c.toLowerCase().includes(query))){const periods=state.auth.filter(a=>a.client===client),active=periods.filter(a=>monthly(a)&&coversMonth(a,month));const limit=active.reduce((s,a)=>s+a.hours,0),logged=active.reduce((s,a)=>s+used(a.id,month),0),remaining=active.reduce((s,a)=>s+Math.max(0,a.hours-used(a.id,month)),0);const card=el('article',undefined,'directory-card');card.style.setProperty('--client',clientColor(client));const line=el('div',undefined,'line');const badge=el('span',client,'client-badge');line.append(badge,el('small',periods.length+' services'));card.append(line,el('h3',client),el('p',limit?hours(remaining)+' remaining this month':'No monthly allowance in view','muted'),progressLine(logged,limit,clientColor(client)),el('small',hours(logged)+' logged / '+hours(limit)+' monthly allowance'));const over=active.filter(a=>used(a.id,month)>a.hours);if(over.length)card.append(el('span',over.length+' service over allowance','pill warn'));if(periods.some(a=>!monthly(a)))card.append(el('small','Also has full-period services'));const b=button('View client',()=>goGarden('client',client));b.className='view-client';card.append(b);target.append(card);}
+ for(const client of clientsAZ().filter(c=>c.toLowerCase().includes(query))){const periods=state.auth.filter(a=>a.client===client),active=periods.filter(a=>monthly(a)&&coversMonth(a,month));const limit=active.reduce((s,a)=>s+a.hours,0),logged=active.reduce((s,a)=>s+used(a.id,month),0),remaining=active.reduce((s,a)=>s+Math.max(0,a.hours-used(a.id,month)),0);const card=el('article',undefined,'directory-card');card.style.setProperty('--client',clientColor(client));const line=el('div',undefined,'line');const badge=el('span',client,'client-badge');line.append(badge,el('small',periods.length+' services'));card.append(line,el('h3',client),el('p',limit?hours(remaining)+' remaining this month':'No monthly allowance in view','muted'),progressLine(logged,limit,clientColor(client)),el('small',hours(logged)+' logged / '+hours(limit)+' monthly allowance'));const over=active.filter(a=>used(a.id,month)>a.hours);if(over.length)card.append(el('span',over.length+' service over allowance','pill warn'));if(periods.some(a=>!monthly(a)))card.append(el('small','Also has full-period services'));const b=button('View client',()=>goGarden('client',client));b.className='view-client';const manage=button('Manage client',()=>openClientManage(client));manage.className='view-client';card.append(b,manage);target.append(card);}
  if(!target.children.length){
-  if(state.auth.length===0 && !query){
+  if(!clientsAZ().length && !query){
     const welcome=el('article',undefined,'garden-empty-state');
     welcome.append(el('span','🌱','garden-empty-seed'),el('h3','Your garden is ready to grow!'),el('p','Add your first client and authorization to start tracking hours.','muted'));
     const add=button('＋ Add your first client',()=>openAuth());add.className='primary';welcome.append(add);target.append(welcome);
-  }else target.append(el('p','No clients match your search.','empty'));
+  }else target.append(el('p',query?'No clients match your search. Try another code.':'No active clients right now. Restore one from Archived when needed.','empty'));
  }
 }
 const compactGarden = matchMedia('(max-width: 960px)');
@@ -532,7 +641,7 @@ function paintStickyClient(){
   panel.style.setProperty('--client',clientColor(navClient));
   $('sticky-client-code').textContent=navClient;
   $('sticky-client-month').textContent=monthText($('month').value);
-  const services=state.auth.filter(a=>a.client===navClient&&coversMonth(a,$('month').value));
+  const services=state.auth.filter(a=>a.client===navClient&&!a.archived&&coversMonth(a,$('month').value));
   panel.classList.toggle('many-services',services.length>=4);
   for(const auth of services)target.append(stickyRing(auth,$('month').value));
   if(!services.length)target.append(el('small','No services for this month.','sticky-no-services'));
@@ -901,7 +1010,7 @@ function valid(data) {
   if (!data || (data.version !== undefined && data.version !== 2 && data.version !== 3 && data.version !== 4 && data.version !== 5 && data.version !== 6 && data.version !== 7) || !Array.isArray(data.auth) || !Array.isArray(data.logs)) return false;
   if (!data.auth.every(a => validId(a) && typeof a.client === 'string' && a.client.trim() && a.client.length <= 30
     && (a.service === undefined || serviceNames.includes(a.service)) && (a.basis === undefined || ['monthly','period'].includes(a.basis))
-    && (a.note === undefined || typeof a.note === 'string') && validDate(a.start) && validDate(a.end) && a.start <= a.end && Number.isFinite(a.hours) && a.hours >= .02 && a.hours <= 100000)) return false;
+    && (a.note === undefined || typeof a.note === 'string') && (a.archived === undefined || typeof a.archived === 'boolean') && validDate(a.start) && validDate(a.end) && a.start <= a.end && Number.isFinite(a.hours) && a.hours >= .02 && a.hours <= 100000)) return false;
   const periods = new Map(data.auth.map(a => [a.id,a]));
   return periods.size === data.auth.length && data.logs.every(l => validId(l) && periods.has(l.auth) && validDate(l.date)
     && (l.contact === undefined || ['', 'direct', 'indirect'].includes(l.contact)) && (l.modality === undefined || Object.hasOwn(modalityLabels,l.modality)) && (l.provider === undefined || typeof l.provider === 'string') && within(l.date,periods.get(l.auth)) && Number.isInteger(l.minutes) && l.minutes >= 1 && l.minutes <= 1440)
@@ -1076,7 +1185,7 @@ function updateSessionDates(preferred) {
 function render() {
   updateReviewMonths();
   const month = $('month').value || monthFor(day());
-  const active = state.auth.filter(a => coversMonth(a,month));
+  const active = state.auth.filter(a => coversMonth(a,month) && (!a.archived || month < monthFor(day())));
   const monthlyServices = active.filter(monthly);
   const metrics = $('metrics');
   metrics.replaceChildren();
@@ -1091,7 +1200,7 @@ function render() {
     tile.append(el('span',label,'muted'),el('strong',value));
     metrics.append(tile);
   }
-  const periods = [...state.auth].sort((a,b) => a.client.localeCompare(b.client) || b.start.localeCompare(a.start) || serviceNames.indexOf(serviceName(a)) - serviceNames.indexOf(serviceName(b)));
+  const periods = state.auth.filter(a=>!a.archived).sort((a,b) => a.client.localeCompare(b.client) || b.start.localeCompare(a.start) || serviceNames.indexOf(serviceName(a)) - serviceNames.indexOf(serviceName(b)));
   setOptions($('log-filter'),periods.filter(a=>!navClient||a.client===navClient),navClient?'All services for '+navClient:'All services and periods');
   const container = $('cards');
   const nav = $('client-nav');
@@ -1104,7 +1213,7 @@ function render() {
     group.dataset.client = client;
     const heading = el('div',undefined,'client-heading line');
     heading.tabIndex = -1;
-    heading.append(el('h3',client),button('Add service',() => openAuth(undefined,client)));
+    const headingActions=el('div',undefined,'actions');headingActions.append(button('Add service',()=>openAuth(undefined,client)),button('Manage client',()=>openClientManage(client)));heading.append(el('h3',client),headingActions);
     nav.append(button(client,() => { heading.focus(); heading.scrollIntoView({block:'start'}); }));
     const cards = el('div',undefined,'cards');
     const services = visible.filter(a => a.client === client);
@@ -1131,6 +1240,7 @@ function render() {
       } else {
         const split = serviceName(auth) === 'BCBA supervision' ? supervisionHours(auth,month) : null;
         card.append(el('small',monthly(auth) ? monthText(month) : 'Full authorization period'),balance(usage(auth,month),auth.hours,split));
+        const achievement=gardenClientAchievement(auth,month);if(achievement)card.append(achievement);
         if (split) card.append(supervisionMix(auth,month,split));
       }
       card.append(periodHistory(auth,month));
@@ -1141,7 +1251,7 @@ function render() {
     group.append(heading,cards);
     container.append(group);
   }
-  if (!visible.length) container.append(el('p',state.auth.length ? 'No periods match this filter.' : 'Add an authorization to start tracking hours.','empty'));
+  if (!visible.length) container.append(el('p',periods.length ? 'No periods match this filter. Try All periods.' : 'No active authorizations yet. 🌱 Add a client to grow your garden, or restore one from Archived.','empty'));
   renderLogs();
   paintGarden();
 }
@@ -1151,7 +1261,7 @@ function renderLogs() {
   const entries = state.logs.filter(log => (!selected || log.auth === selected) && (!navClient || state.auth.find(a=>a.id===log.auth)?.client===navClient)).sort((a,b) => b.date.localeCompare(a.date));
   target.replaceChildren();
   if (!entries.length) {
-    target.append(el('p','No session entries for this view.','empty'));
+    const empty=el('article',undefined,'garden-empty-state garden-session-empty');empty.append(el('span','🪴','garden-empty-seed'),el('h3',state.auth.length?'A fresh page for your next session':'Your session log is ready to grow'),el('p',state.auth.length?'No sessions recorded for this view yet. Every minute helps your garden grow.':'Add your first client and authorization, then log your time here.','muted'));const action=button(state.auth.some(a=>!a.archived)?'＋ Log your first session':'＋ Add a client',()=>state.auth.some(a=>!a.archived)?openLog():openAuth());action.className='primary';empty.append(action);target.append(empty);
     return;
   }
   const table = el('table');
@@ -1249,7 +1359,16 @@ logForm.onsubmit = async event => {
   const next = {...state,logs:[...state.logs.filter(l => l.id !== entry.id),entry]};
   const error = logForm.querySelector('.error');
   if (!valid(next)) error.textContent = 'Choose an authorization that includes this session date and enter whole minutes.';
-  else if (!(error.textContent = await save(next,'Session logged.'))) $('log-dialog').close();
+  else {
+    const auth=state.auth.find(a=>a.id===entry.auth);
+    const before=auth?usage(auth,monthFor(entry.date)):0;
+    const after=auth?next.logs.filter(l=>l.auth===entry.auth&&(!monthly(auth)||monthFor(l.date)===monthFor(entry.date))).reduce((sum,l)=>sum+l.minutes,0)/60:0;
+    if(!(error.textContent=await save(next,'Session logged.'))){
+      $('log-dialog').close();
+      if(auth&&before+0.000001<auth.hours&&after>=auth.hours-0.000001&&after<=auth.hours+0.000001)
+        notice('🌼 Congratulations! You completed '+(monthly(auth)?monthText(monthFor(entry.date))+' monthly':'the full authorization period')+' hours for '+auth.client+'!');
+    }
+  }
 };
 $('add-auth').onclick = () => openAuth();
 $('add-log').onclick = () => openLog();
@@ -1269,6 +1388,7 @@ render();
 initializeStorageUI();
 initializeSync();
 initializeGarden();
+initializeClientManagement();
 </script>
 <script>
 // iPhone Home Screen app and Safari use separate storage; pair each installation independently.
