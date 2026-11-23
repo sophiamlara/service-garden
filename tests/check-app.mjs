@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
+import zlib from 'node:zlib';
 import test from 'node:test';
 const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
 test('all embedded application scripts parse',()=>{
@@ -94,4 +95,36 @@ test('stable v1.0 release is consistent across UI',()=>{
  assert.match(html,/aria-label="Version 1\.0">v1\.0/);
  assert.match(html,/class="app-version">v1\.0/);
  assert.doesNotMatch(html,/v0\.4\.5/);
+});
+
+test('ABA Track flower logo is consistently referenced in home screen, tab and sidebar',()=>{
+ const manifest=JSON.parse(fs.readFileSync(new URL('../manifest.webmanifest',import.meta.url),'utf8'));
+ assert.match(html,/apple-touch-icon\.png\?brand=aba-track-1/);
+ assert.match(html,/icon-192\.png\?brand=aba-track-1/);
+ assert.match(html,/class="brand-icon brand-icon-image" src="\.\/icon-192\.png\?brand=aba-track-1"/);
+ assert.equal(manifest.name,'ABA Track');
+ assert.equal(manifest.id,'/service-garden/');
+ assert.equal(manifest.icons.length,2);
+ assert.ok(manifest.icons.every(icon=>icon.src.includes('brand=aba-track-1')));
+});
+test('all logo PNG images are nonblank valid RGBA files with expected dimensions',()=>{
+ for(const [filename,n] of [['apple-touch-icon.png',180],['icon-192.png',192],['icon-512.png',512]]){
+  const bytes=fs.readFileSync(new URL('../'+filename,import.meta.url));
+  assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  assert.equal(bytes.readUInt32BE(16),n);
+  assert.equal(bytes.readUInt32BE(20),n);
+  assert.equal(bytes[24],8);
+  assert.equal(bytes[25],6);
+  let offset=8,idat=[];
+  while(offset+12<=bytes.length){
+   const length=bytes.readUInt32BE(offset),type=bytes.toString('ascii',offset+4,offset+8);
+   if(type==='IDAT')idat.push(bytes.subarray(offset+8,offset+8+length));
+   offset+=12+length;
+   if(type==='IEND')break;
+  }
+  const pixels=zlib.inflateSync(Buffer.concat(idat));assert.equal(pixels.length,n*(1+n*4));
+  const midpoint=Math.floor(n/2),p=(midpoint*(n*4+1))+1+midpoint*4;
+  assert.ok(pixels[p+3]>200,'center flower is visible');
+  assert.ok(pixels[p]<200,'gold flower is darker than its background');
+ }
 });
