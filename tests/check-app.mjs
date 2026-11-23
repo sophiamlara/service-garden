@@ -9,8 +9,8 @@ test('all embedded application scripts parse',()=>{
  for(const [i,block] of blocks.entries())assert.doesNotThrow(()=>new vm.Script(block[1],{filename:'inline-'+i+'.js'}));
 });
 test('single application version',()=>{
- assert.match(html,/<title>Service Garden — v0\.4\.1<\/title>/);
- assert.match(html,/id="app-version"[^>]*>v0\.4\.1/);
+ assert.match(html,/<title>Service Garden — v0\.4\.2<\/title>/);
+ assert.match(html,/id="app-version"[^>]*>v0\.4\.2/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
 test('management controls exist',()=>{
@@ -38,9 +38,19 @@ test('home screen metadata targets main application',()=>{
 
 test('sync state labels and conflict decision UI',()=>{
  for(const state of ['offline','checking','syncing','synced','error','conflict']) assert.match(html,new RegExp(state+":'"));
- for(const id of ['garden-conflict-panel','export-local-conflict','export-cloud-dialog','keep-cloud-dialog','keep-local-dialog'])assert.ok(html.includes('id="'+id+'"'),id);
+ for(const id of ['garden-conflict-panel','garden-conflict-counts','garden-conflict-diff','export-local-conflict','export-cloud-dialog','garden-apply-conflict','garden-conflict-ack'])assert.ok(html.includes('id="'+id+'"'),id);
  assert.match(html,/function gardenShowConflict\(/);
  assert.match(html,/gardenShowConflict\(\);return;/);
- assert.match(html,/gardenResolveConflict\(false\)/);
- assert.match(html,/gardenResolveConflict\(true\)/);
+ assert.match(html,/gardenResolveConflict\(selected==='local'\)/);
+});
+
+test('comparison shows real field differences without choosing automatically',()=>{
+ assert.match(html,/function gardenDiffRows\(/);
+ assert.match(html,/item\.fields/);
+ assert.match(html,/gardenDiffValue\(item\.l\?\.\[field\]\)/);
+ assert.match(html,/gardenDiffValue\(item\.r\?\.\[field\]\)/);
+ assert.match(html,/garden-conflict-choice/);
+ assert.match(html,/garden-conflict-ack/);
+ assert.match(html,/disabled>Confirm version and resume sync/);
+ assert.doesNotMatch(html,/\$\('export-cloud'\)/);
 });
