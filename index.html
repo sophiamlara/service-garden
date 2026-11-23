@@ -3,9 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Supervision Tracker</title>
-<meta name="theme-color" content="#192949">
+<title>Service Garden — v0.3</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Service Garden">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f2ece2">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="icon" sizes="192x192" type="image/png" href="./icon-192.png">
 
 
 
@@ -258,17 +263,79 @@ html{scroll-padding-top:140px}
  #month-heading{font-size:1.16rem}
 }
 @media(prefers-reduced-motion:reduce){#sticky-client,#sticky-global{transition:none!important}}
-/* Version + status remain compact and readable at mobile widths. */
-#sync-indicator .app-version{font-size:.72rem;font-weight:550;letter-spacing:.015em;color:#80766c;white-space:nowrap}
-#sync-indicator[data-state="offline"] #sync-status,#sync-indicator[data-state="disconnected"] #sync-status{color:#b64e44}
+
+/* v0.3 — compact statuses and private device pairing */
+#sync-indicator .app-version,.app-version{font-size:.71rem;color:#8b837a;letter-spacing:.015em;font-weight:550;white-space:nowrap}
+#sync-indicator[data-state="offline"] #sync-status,#sync-indicator[data-state="error"] #sync-status,#sync-indicator[data-state="conflict"] #sync-status{color:#ad5149}
+#sync-indicator .sync-led{position:relative}
+#sync-indicator[data-state="checking"] .sync-led::after,#sync-indicator[data-state="syncing"] .sync-led::after{content:"";position:absolute;inset:-7px;border:2px solid transparent;border-top-color:var(--signal);border-right-color:var(--signal);border-radius:50%;animation:garden-spin 1.8s linear infinite}
+@keyframes garden-spin{to{transform:rotate(360deg)}}
+.garden-sync-dialog{display:grid;gap:14px;padding:4px}
+.garden-sync-dialog h2{font-size:1.3rem;margin:0}.garden-sync-dialog .muted{font-size:.86rem}
+.garden-sync-dialog form{display:grid;gap:12px}.garden-beta-warning{background:#fff1d8;padding:10px 12px;border-radius:10px;font-size:.86rem;color:#775923}
+#garden-device-panel{display:grid;gap:10px;border-top:1px solid #e1dbd1;padding-top:10px}
+.garden-device-list{display:grid;gap:7px}.garden-device-row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px;border-radius:11px;background:#f5f4ed}
+.garden-device-row>div{display:grid;gap:2px}.garden-device-row small{color:#7a7e73;font-size:.75rem}
+#sync-dialog .actions{display:flex;gap:10px;flex-wrap:wrap}#sync-dialog input{width:100%;min-width:0}
+@media(prefers-reduced-motion:reduce){#sync-indicator .sync-led::after{animation:none!important}}
+
+/* iPhone Duo outer/inner displays + standalone iOS Home Screen app */
+html{overflow-wrap:normal}body{min-width:0;-webkit-text-size-adjust:100%;overscroll-behavior-y:contain}
+input,select,textarea{font-size:max(16px,1rem)}
+button{touch-action:manipulation}
+#header-sync summary{min-height:44px}
+#sync-indicator{gap:6px;flex-wrap:nowrap}
+#sync-indicator .app-version{opacity:.84;font-size:.68rem}
+#sync-dialog{width:min(96vw,490px);max-height:min(88dvh,calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px));}
+#sync-dialog .garden-sync-dialog{padding-bottom:max(5px,env(safe-area-inset-bottom))}
+#quick-log{right:max(14px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom))}
+/* Duo inner display and Split View widths: use a full-width workspace rather than a narrow desk+sidebar. */
+@media (min-width:721px) and (max-width:960px){
+ #sidebar{width:min(310px,85vw);visibility:hidden;transform:translateX(-105%);transition:none;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom))}
+ #sidebar.open{visibility:visible;transform:translateX(0)}
+ #sidebar-close,#mobile-menu{display:block}
+ #sidebar-close{font-size:1.2rem;padding:0 10px;min-height:44px}
+ header,main{margin-left:0;max-width:none}
+ header>div{padding:14px max(22px,env(safe-area-inset-right)) 16px max(22px,env(safe-area-inset-left))}
+ #mobile-menu{font-size:.85rem;background:#edf2e5;box-shadow:none}
+ main{padding:0 max(22px,env(safe-area-inset-right)) 96px max(22px,env(safe-area-inset-left))}
+ #directory-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .visual-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+ .metric{padding:13px}.metric strong{font-size:1.55rem}
+}
+@media (max-width:430px){
+ .metric{min-width:0}.metric strong{font-size:clamp(1.25rem,5vw,1.55rem)}
+ #sync-indicator .app-version{font-size:.65rem}
+ header>div{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+ main{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+ #directory-cards{gap:10px}
+}
+@media(max-width:360px){
+ #sync-indicator{gap:4px}#sync-indicator .app-version{font-size:.61rem}
+ #mobile-menu{padding:7px 10px;font-size:.78rem}
+ .metrics{gap:7px}.metric{padding:10px}
+ #sticky-service-rings{gap:3px}
+}
+@media(display-mode:standalone){
+ body{padding-bottom:env(safe-area-inset-bottom)}
+ #quick-log{bottom:max(18px,env(safe-area-inset-bottom))}
+ header>div{padding-top:max(16px,env(safe-area-inset-top))}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+/* A purposeful, compact empty dashboard instead of fictional seed records. */
+.garden-empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:flex-start;gap:8px;background:#fffdf8;border:1px dashed #cfbfa6;padding:22px}
+.garden-empty-state .garden-empty-seed{font-size:2rem;line-height:1.1}.garden-empty-state h3{font-size:1.07rem}
+.garden-empty-state .muted{margin:0 0 5px}.garden-empty-state .primary{min-height:44px}
 </style>
 </head>
 <body>
-<button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Design preview · sample data</small></div></aside>
+<button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
 <header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
-<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><span id="app-version" class="app-version" aria-label="App version 0.2">v0.2</span><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.3">v0.3</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
 <div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
-<details class="sync-preview-controls"><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p>Visual examples only. No cloud connection or upload.</p></details><div id="conflict" hidden><p class="error">Both devices changed the same record. Sync has paused; neither copy has been overwritten.</p><div class="actions"><button id="export-cloud">Export cloud copy</button><button id="use-cloud">Use cloud copy</button><button id="use-local">Use this device’s copy</button></div><p class="muted">Choosing a copy replaces the entire tracker. Export both copies first if you need to combine changes.</p></div>
+<details class="sync-preview-controls" hidden><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p></p></details><div id="conflict" hidden><p class="error">Both devices changed the same record. Sync has paused; neither copy has been overwritten.</p><div class="actions"><button id="export-cloud">Export cloud copy</button><button id="use-cloud">Use cloud copy</button><button id="use-local">Use this device’s copy</button></div><p class="muted">Choosing a copy replaces the entire tracker. Export both copies first if you need to combine changes.</p></div>
 </div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
 <section id="sticky-client" aria-label="Condensed client header and service balances" hidden>
   <div class="sticky-identity"><button id="sticky-clients-menu" aria-label="Open client navigation">☰</button><div class="sticky-client-name"><strong id="sticky-client-code"></strong><span id="sticky-client-month"></span></div></div>
@@ -277,7 +344,7 @@ html{scroll-padding-top:140px}
 <section id="sticky-global" aria-label="Condensed tracker header" hidden>
   <button id="sticky-global-menu" aria-label="Open client navigation">☰</button>
   <div class="sticky-global-title"><strong id="sticky-global-heading">Monthly overview</strong><span id="sticky-global-subtitle">November 2026</span></div>
-  <button id="sticky-global-sync" type="button" aria-label="View synchronization status"><span class="sync-led" aria-hidden="true"></span><span id="sticky-global-status">Not connected</span></button>
+  <button id="sticky-global-sync" type="button" aria-label="View synchronization status"><span class="sync-led" aria-hidden="true"></span><span id="sticky-global-status">Offline</span></button>
 </section>
 <main>
 <p id="notice" role="status"></p>
@@ -290,18 +357,27 @@ html{scroll-padding-top:140px}
 <section id="logs-section"><div class="line section-head"><h2>Session log</h2><select id="log-filter" aria-label="Filter supervision log by authorization"></select></div><div id="logs"></div></section>
 <footer><div class="actions"><button id="export">Export backup</button><button id="import">Import backup</button><button id="recover">Recover local data</button><input type="file" id="backup-file" accept=".json,application/json" hidden></div><p class="muted hint">Keep a downloaded backup in Files or iCloud Drive. Local recovery copies cannot survive cleared browser data. <span id="backup-status">No backup downloaded in this browser yet.</span></p></footer>
 </main>
-<dialog id="sync-dialog"><form id="sync-form">
-<h2>Private sync</h2><p class="muted">Connect your own Supabase project. Sign in on each device with the same account. Your password is not saved.</p>
-<details id="connection-fields"><summary>Connection settings</summary>
-<label>Supabase project URL<input name="url" type="url" placeholder="https://your-project.supabase.co" required></label>
-<label>Publishable key<input name="publicKey" autocomplete="off" placeholder="sb_publishable_…" required></label>
-<p class="muted">Use a publishable key or legacy anon key. Never enter a secret or service-role key.</p></details>
-<label>Email<input name="email" type="email" autocomplete="username" required></label>
-<label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+<dialog id="sync-dialog" aria-label="Private device synchronization">
+<div class="garden-sync-dialog">
+<h2>Private device sync <small class="app-version">v0.3</small></h2>
+<p class="muted">Pair this browser with your private key. No email address or password is required. Once paired, changes sync automatically when online.</p>
+<p id="garden-beta-warning" class="garden-beta-warning"><strong>Sync verification underway.</strong> Use only fictional test records until Mac and iPhone pairing, synchronization, and revocation are verified.</p>
+<form id="sync-form" autocomplete="off">
+<label>Device name<input name="deviceName" id="garden-device-name" maxlength="60" placeholder="MacBook, iPhone, iPad or Work Computer" required></label>
+<label>Private pairing key<input name="pairingKey" type="password" minlength="64" maxlength="64" pattern="[a-fA-F0-9]{64}" placeholder="64-character private key" autocomplete="off" autocapitalize="off" spellcheck="false" required></label>
+<div class="actions"><button class="primary" id="connect">Pair this device</button></div>
+</form>
+<section id="garden-device-panel" hidden>
+<h3>My devices</h3><p class="muted">These browsers can access your synchronized Service Garden. Revoking a device prevents future server access.</p>
+<div class="garden-device-list" id="garden-devices-list"></div>
+<div class="actions"><button type="button" id="garden-refresh-devices">Refresh devices</button><button type="button" id="garden-check-updates">Check for updates</button><button type="button" id="signout">Unpair this browser</button></div>
+</section>
 <p class="error" role="alert" id="sync-error"></p>
-<div class="actions"><button class="primary" id="connect">Sign in &amp; sync</button><button type="button" id="signout">Sign out</button><button type="button" data-close>Close</button></div>
-<p class="muted">Sign-out ends this tab’s session. Local entries stay on this device. Use only your own devices.</p>
-</form></dialog>
+<div class="actions"><button type="button" data-close>Close</button></div>
+<p class="muted" style="font-size:.78rem">The pairing key is not saved in this browser. Keep a separate private copy for your next device. Local entries remain on your device when offline.</p>
+<p class="muted" style="font-size:.78rem"><strong>iPhone Duo:</strong> For the app icon, use Safari’s Share menu → Add to Home Screen → <strong>Open as Web App</strong>. Safari and your Home Screen app each need their own pairing.</p>
+</div>
+</dialog>
 <dialog id="recovery-dialog"><h2>Local recovery</h2><p class="muted">Download a copy, inspect it, then use Import backup to restore it.</p><div id="recovery-list" class="stats"></div><button type="button" id="export-raw">Download raw local data</button><button type="button" data-close>Close</button></dialog>
 <dialog id="auth-dialog"><form id="auth-form">
 <h2>Authorization</h2>
@@ -323,31 +399,15 @@ html{scroll-padding-top:140px}
 <p class="error" role="alert"></p><div class="actions"><button class="primary">Save entry</button><button type="button" data-close>Cancel</button></div>
 </form></dialog>
 <button id="quick-log" class="primary">＋ Log time</button>
-<script>// Fictional records only. Isolated storage: never reads the real tracker's data.
-try {
- if(!localStorage.getItem('garden-preview-legacy')&&!localStorage.getItem('garden-preview-safe-v1')){
- const now=new Date(),year=now.getFullYear(),month=String(now.getMonth()+1).padStart(2,'0'),prefix=year+'-'+month;
- const end=new Date(year,now.getMonth()+1,0).getDate();
- const auth=[],logs=[];
- [['AlBe',10,6,4],['CaDe',12,8,2],['ElFi',8,4,3],['GiHa',10,5,4]].forEach(([client,limit,used,care],i)=>{
-  [['BCBA supervision',limit,used],['Caregiver training',4,care],['Direct ABA',40,18+i*4]].forEach(([service,hours,total],j)=>{
-   const id='demo-'+i+'-'+j;auth.push({id,client,service,hours,basis:'monthly',start:prefix+'-01',end:prefix+'-'+end});
-   for(let k=0;k<Math.ceil(total/2);k++)logs.push({id:id+'-'+k,auth:id,date:prefix+'-'+String(Math.min(2+k*2,end)).padStart(2,'0'),minutes:Math.min(2,total-k*2)*60,contact:k%2?'indirect':'direct',modality:'telehealth'});
-  });
- });
- auth.push({id:'demo-period',client:'CaDe',service:'Reassessment',hours:6,basis:'period',start:prefix+'-01',end:year+'-12-31'});
- localStorage.setItem('garden-preview-legacy',JSON.stringify({version:7,auth,logs}));
- }
-}catch{}
-</script><script>let navClient=null, gardenView='overview';
-// Preview-only appearance preferences, separate from session and authorization data.
+<script>let navClient=null, gardenView='overview';
+// Cosmetic preferences never contain authorization or log records.
 const clientPalette=['#ad5f4d','#597f9f','#b58a27','#8c6b9e','#4e8c82','#bb7186','#778440','#a8754b','#6374ae','#9b635e','#477d99','#8b7840'];
-let clientColors={};try{clientColors=JSON.parse(localStorage.getItem('garden-preview-colors'))||{};}catch{}
+let clientColors={};try{clientColors=JSON.parse(localStorage.getItem('service-garden-v03-beta-colors'))||{};}catch{}
 function clientColor(code){
  if(!clientColors[code]){
   const assigned=new Set(Object.values(clientColors));
   clientColors[code]=clientPalette.find(c=>!assigned.has(c)) || 'hsl('+Math.round(Object.keys(clientColors).length*137.508%360)+' 40% 43%)';
-  try{localStorage.setItem('garden-preview-colors',JSON.stringify(clientColors));}catch{}
+  try{localStorage.setItem('service-garden-v03-beta-colors',JSON.stringify(clientColors));}catch{}
  }
  return clientColors[code];
 }
@@ -381,7 +441,13 @@ function paintGarden(){
 function paintDirectory(){
  const target=$('directory-cards');target.replaceChildren();const month=$('month').value,query=$('client-search').value.toLowerCase();
  for(const client of clientsAZ().filter(c=>c.toLowerCase().includes(query))){const periods=state.auth.filter(a=>a.client===client),active=periods.filter(a=>monthly(a)&&coversMonth(a,month));const limit=active.reduce((s,a)=>s+a.hours,0),logged=active.reduce((s,a)=>s+used(a.id,month),0),remaining=active.reduce((s,a)=>s+Math.max(0,a.hours-used(a.id,month)),0);const card=el('article',undefined,'directory-card');card.style.setProperty('--client',clientColor(client));const line=el('div',undefined,'line');const badge=el('span',client,'client-badge');line.append(badge,el('small',periods.length+' services'));card.append(line,el('h3',client),el('p',limit?hours(remaining)+' remaining this month':'No monthly allowance in view','muted'),progressLine(logged,limit,clientColor(client)),el('small',hours(logged)+' logged / '+hours(limit)+' monthly allowance'));const over=active.filter(a=>used(a.id,month)>a.hours);if(over.length)card.append(el('span',over.length+' service over allowance','pill warn'));if(periods.some(a=>!monthly(a)))card.append(el('small','Also has full-period services'));const b=button('View client',()=>goGarden('client',client));b.className='view-client';card.append(b);target.append(card);}
- if(!target.children.length)target.append(el('p','No clients match your search.','empty'));
+ if(!target.children.length){
+  if(state.auth.length===0 && !query){
+    const welcome=el('article',undefined,'garden-empty-state');
+    welcome.append(el('span','🌱','garden-empty-seed'),el('h3','Your garden is ready to grow!'),el('p','Add your first client and authorization to start tracking hours.','muted'));
+    const add=button('＋ Add your first client',()=>openAuth());add.className='primary';welcome.append(add);target.append(welcome);
+  }else target.append(el('p','No clients match your search.','empty'));
+ }
 }
 const compactGarden = matchMedia('(max-width: 960px)');
 function setGardenDrawer(open,restoreFocus=false){
@@ -510,7 +576,7 @@ const TrackerCore = (() => {
 if (typeof module !== 'undefined') module.exports=TrackerCore;
 </script>
 <script>'use strict';
-const storeKey = 'garden-preview-safe-v1';
+const storeKey = 'service-garden-v03-beta-safe-v1';
 const emptyData = () => ({version:7,auth:[],logs:[]});
 let store, storageReady = false, cloudConflict = null, rawRecoveryRequested = false;
 function exclusive(action) {
@@ -524,7 +590,7 @@ function readStore() {
     if (s.format !== 1 || !valid(s.data) || !valid(s.base) || !Number.isSafeInteger(s.revision) || s.revision < 0 || !Array.isArray(s.backups)) throw Error('Invalid saved data');
     return s;
   }
-  const legacy = localStorage.getItem('garden-preview-legacy');
+  const legacy = localStorage.getItem('service-garden-v03-beta-legacy');
   const data = legacy === null ? emptyData() : JSON.parse(legacy);
   if (!valid(data)) throw Error('Invalid earlier data');
   return {format:1,data:upgrade(data),base:emptyData(),revision:0,owner:null,endpoint:null,backups:[],lastSync:null};
@@ -568,7 +634,7 @@ function initializeStorageUI() {
         if(!rawRecoveryRequested)throw Error('Download raw local data from Recover local data first, then import this backup again.');
         if(!confirm('Confirm you have saved the raw recovery download. Replace unreadable local data with '+next.auth.length+' authorizations and '+next.logs.length+' sessions from this backup?'))return;
         await exclusive(async()=>{
-          const raw={current:localStorage.getItem(storeKey),legacy:localStorage.getItem('garden-preview-legacy')};
+          const raw={current:localStorage.getItem(storeKey),legacy:localStorage.getItem('service-garden-v03-beta-legacy')};
           localStorage.setItem('supervision-damaged-recovery',JSON.stringify(raw));
           writeStore({format:1,data:next,base:emptyData(),revision:0,owner:null,endpoint:null,backups:[],lastSync:null});
         });
@@ -586,42 +652,210 @@ function initializeStorageUI() {
     $('recovery-dialog').showModal();
   };
   $('export-raw').onclick=()=>{
-    try{downloadJSON({current:localStorage.getItem(storeKey),legacy:localStorage.getItem('garden-preview-legacy')},'supervision-raw-recovery.json');rawRecoveryRequested=true;}catch{notice('Browser storage cannot be accessed.');}
+    try{downloadJSON({current:localStorage.getItem(storeKey),legacy:localStorage.getItem('service-garden-v03-beta-legacy')},'supervision-raw-recovery.json');rawRecoveryRequested=true;}catch{notice('Browser storage cannot be accessed.');}
   };
   if (false && 'serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(()=>notice('Offline app installation was unavailable. Your entries are still saved locally.'));
   if(navigator.storage?.persist)navigator.storage.persist().catch(()=>{});
 }
 </script>
-<script>// Local-only design preview. These examples never contact Supabase.
-const syncStyles={synced:'Synced',checking:'Checking',syncing:'Syncing',error:'Sync error',conflict:'Sync conflict',offline:'Offline',disconnected:'Offline'};
-function paintSyncIndicator(status,detail,demo=false){
- $('sync-indicator').dataset.state=status;
- $('sync-status').textContent=(demo?'Example: ':'')+syncStyles[status];
- $('sync-detail').textContent=detail;
- $('sync-demo-tag').hidden=!demo;
- const busy=status==='checking'||status==='syncing';
- $('sync-progress').hidden=!busy;
- $('sync-progress').setAttribute('aria-label',(demo?'Example: ':'')+syncStyles[status]+' in progress');
+<script>
+'use strict';
+/* Service Garden v0.3: private-key pairing, anonymous device identity, and
+   conflict-aware local-first sync. This file contains no private pairing key. */
+const GARDEN_SYNC_URL = 'https://upinjjjfjgqzkoquvgbg.supabase.co';
+const GARDEN_SYNC_KEY = 'sb_publishable_auDYoCKfm10rgY4hUGni1A_UWkJXjrW';
+const GARDEN_PAIR_STORAGE = 'service-garden-v03-paired-workspace';
+const GARDEN_SDK_URL = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.80.0/dist/umd/supabase.min.js';
+let gardenClient = null, gardenSdkPromise = null, gardenWorkspace = null, syncBusy = false;
+let syncPhase = '', syncMessage = '', syncTimer = null, syncStatusOverride = '';
+try { gardenWorkspace = localStorage.getItem(GARDEN_PAIR_STORAGE) || null; } catch {}
+const gardenIsPending = () => store && !TrackerCore.equal(store.data, store.base);
+const gardenSyncError = e => String(e?.message || e || 'Unknown error').slice(0,260);
+function gardenSyncPaint(status, detail) {
+ const labels = {offline:'Offline',checking:'Checking',syncing:'Syncing',synced:'Synced',error:'Sync error',conflict:'Sync conflict'};
+ const indicator = $('sync-indicator'); indicator.dataset.state = status;
+ $('sync-status').textContent = labels[status] || 'Offline';
+ $('sync-detail').textContent = detail || '';
+ $('sync-progress').hidden = status!=='checking' && status!=='syncing';
+ $('sync-demo-tag').hidden = true;
+ $('conflict').hidden = !cloudConflict;
+ $('sync-now').disabled = syncBusy || !storageReady || !gardenWorkspace;
+ $('sync-settings').textContent = 'Manage devices';
 }
-function updateSyncStatus(){
- const demo=$('sync-demo').value;
- if(!storageReady){paintSyncIndicator('error','Local saving is blocked. Use Recover local data before making changes.');return;}
- if(demo){paintSyncIndicator(demo,'Visual example only · sample records · no cloud connection.',true);return;}
- paintSyncIndicator('offline','Design preview · sample records saved locally. Supabase is not connected.');
+function updateSyncStatus() {
+ if(!storageReady) return gardenSyncPaint('error','Local storage is unreadable. Use recovery before making changes.');
+ if(cloudConflict) return gardenSyncPaint('conflict','Two devices changed the same record. Review both copies before replacing either one.');
+ if(!navigator.onLine) return gardenSyncPaint('offline', 'Offline. Local changes are safe on this device, but have not been synchronized.');
+ if(syncStatusOverride) return gardenSyncPaint(syncStatusOverride,syncMessage);
+ if(!gardenWorkspace) return gardenSyncPaint('offline','No device paired. Your data is saved on this browser only.');
+ if(syncMessage) return gardenSyncPaint('error',syncMessage);
+ if(syncBusy) return gardenSyncPaint(syncPhase || 'checking','Communicating securely with Supabase.');
+ if(gardenIsPending()) return gardenSyncPaint('checking','Saved locally. Waiting for cloud confirmation.');
+ if(store?.lastSync) return gardenSyncPaint('synced','Last confirmed sync: '+new Date(store.lastSync).toLocaleString());
+ gardenSyncPaint('checking','Paired device. Checking its cloud copy.');
 }
-function queueSync(){}
+function queueSync(){clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(),850)}
+async function gardenLoadClient() {
+ if(gardenClient) return gardenClient;
+ if(!gardenSdkPromise) gardenSdkPromise = new Promise((resolve,reject)=>{
+   if(window.supabase?.createClient) return resolve();
+   const tag=document.createElement('script');tag.src=GARDEN_SDK_URL;tag.async=true;
+   tag.onload=resolve;tag.onerror=()=>reject(Error('Cloud library did not load. Local records are safe.'));
+   document.head.append(tag);
+ });
+ await gardenSdkPromise;
+ if(!window.supabase?.createClient) throw Error('Cloud library is unavailable.');
+ gardenClient=window.supabase.createClient(GARDEN_SYNC_URL,GARDEN_SYNC_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storageKey:'service-garden-v03-anonymous-session'}});
+ return gardenClient;
+}
+async function gardenSession(allowNew=false) {
+ const client=await gardenLoadClient();
+ const {data,error}=await client.auth.getSession();if(error)throw error;
+ if(data?.session) return client;
+ if(!allowNew)throw Error('Device session lost. Re-pair using your private key.');
+ const fresh=await client.auth.signInAnonymously();
+ if(fresh.error)throw Error('Anonymous device sign-in unavailable. Enable Anonymous Sign-Ins in Supabase Authentication providers. '+gardenSyncError(fresh.error));
+ return client;
+}
+async function gardenRpc(name,args,allowNew=false) {
+ const c=await gardenSession(allowNew);
+ const {data,error}=await c.rpc(name,args);
+ if(error)throw error;
+ return Array.isArray(data)?data[0]||null:data;
+}
+async function gardenReadCloud(){
+ const cloud=await gardenRpc('garden_pull',{p_workspace_id:gardenWorkspace});
+ if(!cloud || !valid(cloud.payload) || !Number.isSafeInteger(Number(cloud.revision)))throw Error('Cloud returned an invalid tracker; local entries remain unchanged.');
+ return {...cloud,revision:Number(cloud.revision)};
+}
+async function gardenWriteCloud(payload,revision){
+ const r=await gardenRpc('garden_push',{p_workspace_id:gardenWorkspace,p_expected_revision:revision,p_document:payload});
+ if(!r || !Number.isSafeInteger(Number(r.revision)))throw Error('Server save was not confirmed.');
+ return Number(r.revision);
+}
+async function syncNow(){
+ if(syncBusy || cloudConflict || !storageReady || !gardenWorkspace) {updateSyncStatus();return;}
+ if(!navigator.onLine){updateSyncStatus();return;}
+ const quiet=!!store?.lastSync && !gardenIsPending();
+ syncBusy=true; syncMessage='';syncPhase=quiet?'':'checking';if(!quiet)updateSyncStatus();
+ try {
+  await exclusive(async()=>{
+   const current=readStore();
+   if(current.owner && (current.owner!==gardenWorkspace || current.endpoint!==GARDEN_SYNC_URL)) throw Error('This browser is linked to a different workspace. Export a backup before switching.');
+   const cloud=await gardenReadCloud();
+   const firstOverlap=!current.owner && (current.data.auth.length||current.data.logs.length) && cloud.revision>0 && !TrackerCore.equal(current.data,cloud.payload);
+   const merged=TrackerCore.merge(current.base,current.data,cloud.payload);
+   if(firstOverlap || merged.conflicts.length || !valid(merged.data)) {
+     cloudConflict=cloud;store=current;state=current.data;storageSnapshot=JSON.stringify(current);render();return;
+   }
+   let revision=cloud.revision;
+   if(!TrackerCore.equal(merged.data,cloud.payload)) {
+     syncPhase='syncing'; updateSyncStatus();
+     try{revision=await gardenWriteCloud(merged.data,revision)}catch(e){
+       if(/REVISION_CONFLICT|409/i.test(gardenSyncError(e))) {cloudConflict=await gardenReadCloud();render();return;}
+       throw e;
+     }
+   }
+   writeStore({...current,data:merged.data,base:merged.data,revision,owner:gardenWorkspace,endpoint:GARDEN_SYNC_URL,lastSync:new Date().toISOString(),backups:TrackerCore.equal(current.data,merged.data)?current.backups:snapshots(current)});
+   render();
+  });
+ }catch(e){
+  syncMessage=gardenSyncError(e);
+  if(/DEVICE_NOT_PAIRED/i.test(syncMessage))syncMessage='This browser is no longer paired. Re-pair using your private key.';
+ }finally{syncBusy=false;syncPhase='';updateSyncStatus()}
+}
+async function gardenResolveConflict(useLocal){
+ if(!cloudConflict || syncBusy || !gardenWorkspace)return;
+ if(!confirm((useLocal?'Replace the cloud version with this device’s records?':'Replace this device’s records with the cloud version?')+' Export a backup of both copies before continuing.'))return;
+ syncBusy=true;syncPhase='syncing';updateSyncStatus();
+ try{await exclusive(async()=>{
+  const current=readStore();const latest=await gardenReadCloud();
+  if(latest.revision!==cloudConflict.revision){cloudConflict=latest;throw Error('Cloud changed again. Review the latest copy before choosing.');}
+  const data=useLocal?current.data:latest.payload;
+  const revision=useLocal?await gardenWriteCloud(data,latest.revision):latest.revision;
+  writeStore({...current,data,base:data,revision,owner:gardenWorkspace,endpoint:GARDEN_SYNC_URL,lastSync:new Date().toISOString(),backups:snapshots(current)});
+  cloudConflict=null;syncMessage='';render();notice('Conflict resolved. Local recovery backup preserved.');
+ });}catch(e){syncMessage=gardenSyncError(e);notice(syncMessage)}finally{syncBusy=false;syncPhase='';updateSyncStatus()}
+}
+async function gardenDevices(){
+ const list=$('garden-devices-list');list.replaceChildren();
+ if(!gardenWorkspace){$('garden-device-panel').hidden=true;return;}
+ $('garden-device-panel').hidden=false;
+ try{
+  const client=await gardenSession();const response=await client.rpc('garden_list_devices',{p_workspace_id:gardenWorkspace});
+  if(response.error)throw response.error;
+  const session=(await client.auth.getSession()).data.session;
+  for(const d of response.data||[]){
+   const row=document.createElement('div');row.className='garden-device-row';
+   const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=d.device_name+(d.user_id===session?.user?.id?' (this device)':'');
+   const small=document.createElement('small');small.textContent='Paired '+new Date(d.paired_at).toLocaleDateString(); info.append(strong,small);row.append(info);
+   if(d.user_id!==session?.user?.id){const revoke=document.createElement('button');revoke.type='button';revoke.textContent='Revoke';revoke.onclick=async()=>{
+    const key=prompt('Enter your private pairing key to revoke '+d.device_name+'.');
+    if(!key)return;
+    try{const c=await gardenSession();const r=await c.rpc('garden_revoke_device',{p_workspace_id:gardenWorkspace,p_key:key.trim().toLowerCase(),p_target_user_id:d.user_id});if(r.error)throw r.error;await gardenDevices();notice('Device access revoked.');}
+    catch(e){$('sync-error').textContent='Could not revoke device: '+gardenSyncError(e)}
+   };row.append(revoke)}
+   list.append(row);
+  }
+ }catch(e){list.textContent='Device list unavailable: '+gardenSyncError(e)}
+}
+function gardenSyncOpen(){
+ $('sync-error').textContent='';
+ $('sync-form').hidden=!!gardenWorkspace;
+ $('garden-device-panel').hidden=!gardenWorkspace;
+ if(!$('garden-device-name').value){
+  const homeScreen=!!navigator.standalone || matchMedia('(display-mode: standalone)').matches;
+  $('garden-device-name').value=/iPhone/i.test(navigator.userAgent)?(homeScreen?'iPhone Home Screen':'iPhone Safari'):/iPad/i.test(navigator.userAgent)?(homeScreen?'iPad Home Screen':'iPad Safari'):/Macintosh/i.test(navigator.userAgent)?'MacBook':'My Device';
+ }
+ if(!$('sync-dialog').open)$('sync-dialog').showModal();
+ if(gardenWorkspace)gardenDevices();
+}
 function initializeSync(){
- updateSyncStatus();$('sync-now').hidden=true;
- $('sync-settings').textContent='About this preview';
- $('sync-settings').onclick=()=>notice('Fictional clients, local saving only. The indicator examples do not sync records.');
- $('sync-demo').onchange=updateSyncStatus;
- window.addEventListener('online',updateSyncStatus);window.addEventListener('offline',updateSyncStatus);
+ $('header-sync').querySelector('summary').addEventListener('click',event=>{event.preventDefault();gardenSyncOpen()});
+ $('sync-settings').onclick=gardenSyncOpen;
+ $('sticky-global-sync').onclick=gardenSyncOpen;
+ $('sync-form').onsubmit=async e=>{
+  e.preventDefault();if(syncBusy)return;
+  const form=e.target,key=form.elements.pairingKey.value.trim().toLowerCase(),name=form.elements.deviceName.value.trim();
+  if(!/^[a-f0-9]{64}$/.test(key)){$('sync-error').textContent='Enter the complete 64-character private pairing key.';return;}
+  $('connect').disabled=true;$('sync-error').textContent='';syncBusy=true;syncPhase='checking';updateSyncStatus();
+  try{
+   const row=await gardenRpc('garden_pair',{p_key:key,p_device_name:name||'My device'},true);
+   if(!row?.workspace_id)throw Error('Server did not confirm pairing.');
+   if(store?.owner && store.owner!==row.workspace_id)throw Error('This browser already belongs to another workspace. Export its data before changing accounts.');
+   gardenWorkspace=row.workspace_id;localStorage.setItem(GARDEN_PAIR_STORAGE,gardenWorkspace);
+   form.elements.pairingKey.value='';syncMessage='';$('sync-form').hidden=true;$('garden-device-panel').hidden=false;
+  }catch(err){syncMessage=gardenSyncError(err);$('sync-error').textContent=syncMessage}
+  finally{$('connect').disabled=false;syncBusy=false;syncPhase='';updateSyncStatus()}
+  if(gardenWorkspace){await syncNow();await gardenDevices()}
+ };
+ $('signout').onclick=async()=>{
+  if(!gardenWorkspace)return;
+  if(!navigator.onLine){$('sync-error').textContent='Reconnect before unpairing so the server can revoke access.';return;}
+  if(gardenIsPending() || cloudConflict){$('sync-error').textContent='Resolve or back up unsynced changes before unpairing.';return;}
+  if(!confirm('Unpair this browser? Your local records will remain here, but cloud access will be revoked.'))return;
+  try{const c=await gardenSession();const r=await c.rpc('garden_unpair',{p_workspace_id:gardenWorkspace});if(r.error)throw r.error;await c.auth.signOut();
+   localStorage.removeItem(GARDEN_PAIR_STORAGE);gardenWorkspace=null;cloudConflict=null;syncMessage='';$('sync-form').hidden=false;$('garden-device-panel').hidden=true;updateSyncStatus();notice('Device unpaired. Local records preserved.');
+  }catch(err){$('sync-error').textContent='Could not unpair: '+gardenSyncError(err)}
+ };
+ $('sync-now').onclick=()=>gardenWorkspace?syncNow():gardenSyncOpen();
+ $('garden-refresh-devices').onclick=gardenDevices;
+ $('garden-check-updates').onclick=async()=>{await syncNow();await gardenDevices()};
+ $('export-cloud').onclick=()=>{if(cloudConflict)downloadJSON(cloudConflict.payload,'service-garden-cloud-copy-'+day()+'.json')};
+ $('use-cloud').onclick=()=>gardenResolveConflict(false);
+ $('use-local').onclick=()=>gardenResolveConflict(true);
+ window.addEventListener('online',()=>{syncStatusOverride='checking';syncMessage='Reconnected. Checking cloud changes.';updateSyncStatus();syncStatusOverride='';syncMessage='';queueSync()});
+ window.addEventListener('offline',updateSyncStatus);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)queueSync()});
+ setInterval(()=>{if(!document.hidden && gardenWorkspace)syncNow()},30000);
+ updateSyncStatus();if(gardenWorkspace)queueSync();
 }
+
 </script>
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
-const key = 'garden-preview-legacy';
+const key = 'service-garden-v03-beta-legacy';
 let state = {version:7,auth: [], logs: []};
 let storageSnapshot = null;
 const authForm = $('auth-form');
@@ -904,19 +1138,6 @@ function render() {
       card.append(actions);
       cards.append(card);
     }
-    const shared = services.filter(a => ['hrc-maro-supervision','hrc-maro-caregiver'].includes(a.id));
-    if (shared.length === 2 && shared.every(a => monthly(a)) && shared[0].start === shared[1].start && shared[0].end === shared[1].end) {
-      const card = el('article');
-      const combined = {...shared[0],hours:18};
-      card.append(el('h3','Combined BCBA hours'),el('small','Shared order: 18 h/month · supervision and caregiver training'));
-      if (coversMonth(combined,month)) {
-        card.append(el('small',monthText(month)),balance(shared.reduce((sum,a) => sum + usage(a,month),0),18));
-      } else {
-        card.append(el('p','18 h per month · outside ' + monthText(month),'muted'));
-      }
-      card.append(periodHistory(combined,month,shared.map(a => a.id)));
-      cards.append(card);
-    }
     group.append(heading,cards);
     container.append(group);
   }
@@ -1048,6 +1269,17 @@ render();
 initializeStorageUI();
 initializeSync();
 initializeGarden();
+</script>
+<script>
+// iPhone Home Screen app and Safari use separate storage; pair each installation independently.
+// Service worker scope is the single live Service Garden installation.
+if ('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost')) {
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).then(reg=>{
+      if(navigator.onLine)reg.update().catch(()=>{});
+    }).catch(()=>{});
+  },{once:true});
+}
 </script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 'use strict';
-// Beta scope only. Network-first so refresh displays newly deployed versions;
+// Service Garden live scope. Network-first so refresh displays newly deployed versions;
 // offline cache preserves the UI, never caches cloud requests or private data.
-const CACHE='service-garden-v03-beta-shell-1';
+const CACHE='service-garden-v03-shell-1';
 const FILES=['./','./index.html','./manifest.webmanifest','./apple-touch-icon.png','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{
  const cache=await caches.open(CACHE);await cache.addAll(FILES);await self.skipWaiting();
 })()));
 self.addEventListener('activate',e=>e.waitUntil((async()=>{
- const keys=await caches.keys();await Promise.all(keys.filter(x=>x.startsWith('service-garden-v03-beta-')&&x!==CACHE).map(x=>caches.delete(x)));
+ const keys=await caches.keys();await Promise.all(keys.filter(x=>x.startsWith('service-garden-v03-')&&x!==CACHE).map(x=>caches.delete(x)));
  await self.clients.claim();
 })()));
 self.addEventListener('fetch',e=>{

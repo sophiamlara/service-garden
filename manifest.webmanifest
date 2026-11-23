@@ -1,8 +1,8 @@
 {
-  "id": "/service-garden/beta/",
-  "name": "Service Garden — Test",
-  "short_name": "Garden Test",
-  "description": "Private service authorization and supervision-hour tracker (v0.3 beta)",
+  "id": "/service-garden/",
+  "name": "Service Garden",
+  "short_name": "Service Garden",
+  "description": "Private service authorization and supervision-hour tracker",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
