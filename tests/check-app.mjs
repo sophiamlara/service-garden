@@ -100,7 +100,9 @@ test('stable v1.0 release is consistent across UI',()=>{
 test('ABA Track flower logo is consistently referenced in home screen, tab and sidebar',()=>{
  const manifest=JSON.parse(fs.readFileSync(new URL('../manifest.webmanifest',import.meta.url),'utf8'));
  assert.match(html,/apple-touch-icon\.png\?brand=aba-track-1/);
- assert.match(html,/icon-192\.png\?brand=aba-track-1/);
+ assert.match(html,/icon-192\.png\?brand=aba-track-tabs-2/);
+ assert.match(html,/favicon\.svg\?brand=aba-track-tabs-2/);
+ assert.match(html,/safari-pinned-tab\.svg\?brand=aba-track-tabs-2/);
  assert.match(html,/class="brand-icon brand-icon-image" src="\.\/icon-192\.png\?brand=aba-track-1"/);
  assert.equal(manifest.name,'ABA Track');
  assert.equal(manifest.id,'/service-garden/');
@@ -127,4 +129,14 @@ test('all logo PNG images are nonblank valid RGBA files with expected dimensions
   assert.ok(pixels[p+3]>200,'center flower is visible');
   assert.ok(pixels[p]<200,'gold flower is darker than its background');
  }
+});
+
+test('Safari tab assets use valid SVG and include a monochrome pinned-tab icon',()=>{
+ const svg=fs.readFileSync(new URL('../favicon.svg',import.meta.url),'utf8');
+ const mask=fs.readFileSync(new URL('../safari-pinned-tab.svg',import.meta.url),'utf8');
+ assert.match(svg,/<svg[^>]+viewBox="0 0 512 512"/);
+ assert.match(svg,/fill="#956F2B"/);
+ assert.match(mask,/<svg[^>]+viewBox="0 0 512 512"/);
+ assert.match(mask,/fill="black"/);
+ assert.doesNotMatch(mask,/<rect/);
 });
