@@ -258,12 +258,15 @@ html{scroll-padding-top:140px}
  #month-heading{font-size:1.16rem}
 }
 @media(prefers-reduced-motion:reduce){#sticky-client,#sticky-global{transition:none!important}}
+/* Version + status remain compact and readable at mobile widths. */
+#sync-indicator .app-version{font-size:.72rem;font-weight:550;letter-spacing:.015em;color:#80766c;white-space:nowrap}
+#sync-indicator[data-state="offline"] #sync-status,#sync-indicator[data-state="disconnected"] #sync-status{color:#b64e44}
 </style>
 </head>
 <body>
 <button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Design preview · sample data</small></div></aside>
 <header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
-<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="disconnected"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Not connected</strong><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><span id="app-version" class="app-version" aria-label="App version 0.2">v0.2</span><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
 <div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
 <details class="sync-preview-controls"><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p>Visual examples only. No cloud connection or upload.</p></details><div id="conflict" hidden><p class="error">Both devices changed the same record. Sync has paused; neither copy has been overwritten.</p><div class="actions"><button id="export-cloud">Export cloud copy</button><button id="use-cloud">Use cloud copy</button><button id="use-local">Use this device’s copy</button></div><p class="muted">Choosing a copy replaces the entire tracker. Export both copies first if you need to combine changes.</p></div>
 </div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
@@ -305,7 +308,7 @@ html{scroll-padding-top:140px}
 <label>Client code<input name="client" maxlength="30" placeholder="e.g., Client A" required></label>
 <div class="pair"><label>Start date<input type="date" name="start" required></label><label>End date<input type="date" name="end" required></label></div>
 <label>Service<select name="service" required><option value="BCBA supervision">BCBA supervision</option><option value="Caregiver training">Caregiver training</option><option value="Direct ABA">Direct ABA</option><option value="Reassessment">Reassessment</option><option value="Other">Other</option></select></label>
-<label>Hours apply to<select name="basis" required><option value="monthly">Each calendar month</option><option value="period">The full authorization period</option></select></label>
+<label>Hours apply to<select name="basis" required><option value="monthly">Monthly allowance (resets each month)</option><option value="period">Total authorization hours (shared across the entire period)</option></select></label>
 <label>Authorized hours<input type="number" name="hours" min="0.02" max="100000" step="0.01" required></label>
 <p class="error" role="alert"></p><div class="actions"><button class="primary">Save authorization</button><button type="button" data-close>Cancel</button></div>
 </form></dialog>
@@ -590,7 +593,7 @@ function initializeStorageUI() {
 }
 </script>
 <script>// Local-only design preview. These examples never contact Supabase.
-const syncStyles={synced:'Synced',checking:'Checking',syncing:'Syncing',error:'Sync error',conflict:'Sync conflict',offline:'Offline',disconnected:'Not connected'};
+const syncStyles={synced:'Synced',checking:'Checking',syncing:'Syncing',error:'Sync error',conflict:'Sync conflict',offline:'Offline',disconnected:'Offline'};
 function paintSyncIndicator(status,detail,demo=false){
  $('sync-indicator').dataset.state=status;
  $('sync-status').textContent=(demo?'Example: ':'')+syncStyles[status];
@@ -604,7 +607,7 @@ function updateSyncStatus(){
  const demo=$('sync-demo').value;
  if(!storageReady){paintSyncIndicator('error','Local saving is blocked. Use Recover local data before making changes.');return;}
  if(demo){paintSyncIndicator(demo,'Visual example only · sample records · no cloud connection.',true);return;}
- paintSyncIndicator(navigator.onLine?'disconnected':'offline','Design preview · sample records saved locally. Supabase is not connected.');
+ paintSyncIndicator('offline','Design preview · sample records saved locally. Supabase is not connected.');
 }
 function queueSync(){}
 function initializeSync(){
