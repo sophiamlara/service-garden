@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Service Garden — v0.4.2</title>
+<title>Service Garden — v0.4.3</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Service Garden">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -368,12 +368,64 @@ button{touch-action:manipulation}
 .garden-conflict-ack{display:flex;gap:9px;align-items:flex-start;font-weight:500;font-size:.85rem}
 #garden-apply-conflict:disabled{opacity:.45}.garden-conflict-help{font-size:.78rem}
 @media(max-width:430px){.garden-conflict-panel{padding:10px}.garden-conflict-count{padding:8px}.garden-diff-table{font-size:.73rem}}
+
+/* v0.4.3: compact conflict reader and obvious expandable differences */
+#sync-dialog:has(#garden-conflict-panel:not([hidden])){width:min(95vw,640px);padding:16px}
+#sync-dialog:has(#garden-conflict-panel:not([hidden])) .garden-sync-dialog{gap:11px}
+#sync-dialog:has(#garden-conflict-panel:not([hidden])) .garden-sync-dialog>h2{font-size:1.17rem}
+#sync-dialog .garden-conflict-panel{gap:12px;padding:14px;background:#fffdf9;border:1px solid #e5dfd6;box-shadow:none}
+.garden-conflict-heading{align-items:center}
+.garden-conflict-heading h3{font-size:1.08rem;color:#6c573d}
+.garden-conflict-heading p{font-size:.82rem}
+.garden-conflict-counts{gap:8px}
+.garden-conflict-count{padding:9px 11px;border-color:#e7e1d8}
+.garden-conflict-count strong{font-size:.82rem}
+.garden-conflict-count span{font-size:.76rem}
+.garden-conflict-panel h4{font-size:.94rem}
+.garden-conflict-panel>p.muted{font-size:.8rem}
+.garden-conflict-diff{gap:7px;max-height:min(38vh,350px);overscroll-behavior:contain}
+.garden-diff-item{border-radius:12px;border:1px solid #ded5c9;box-shadow:0 2px 0 #ede6dd}
+.garden-diff-item[open]{border-color:#adbea5;background:#fffefa}
+.garden-diff-item>summary{position:relative;list-style:none!important;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;align-items:center;padding:12px 13px;cursor:pointer}
+.garden-diff-item>summary::-webkit-details-marker{display:none}
+.garden-diff-eyebrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;grid-column:1 / -1}
+.garden-diff-eyebrow small{font-size:.68rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase}
+.garden-diff-tag{font-size:.7rem;color:#745b41;background:#f6ede1;padding:2px 7px;border-radius:999px}
+.garden-diff-item>summary .garden-diff-title{font-size:.88rem;line-height:1.4;grid-column:1}
+.garden-diff-toggle{grid-column:2;font-size:.75rem;font-weight:750;color:#416c50;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.garden-diff-toggle::after{content:"⌄";font-size:1.15rem;line-height:.8}
+.garden-diff-item[open] .garden-diff-toggle::after{content:"⌃"}
+.garden-diff-table{font-size:.78rem;border-top:1px solid #ebe3d9}
+.garden-diff-table th,.garden-diff-table td{padding:9px 8px;line-height:1.3;vertical-align:top}
+.garden-diff-table th:nth-child(n+2),.garden-diff-table td:nth-child(n+2){width:34%}
+.garden-conflict-backups{padding:9px 0;border-block:1px solid #e5dfd6}
+.garden-conflict-backups>summary{font-size:.86rem;font-weight:700;color:#405d4b}
+.garden-conflict-backups summary .muted{font-size:.75rem;font-weight:400}
+.garden-conflict-decision{gap:8px}
+.garden-conflict-decision legend{font-size:.92rem;margin:0;padding:0 0 7px}
+#sync-dialog .garden-conflict-decision label{display:grid!important;grid-template-columns:22px minmax(0,1fr);justify-content:start!important;align-items:center!important;gap:11px!important;padding:11px 12px!important;min-height:65px;margin:0;width:100%}
+#sync-dialog .garden-conflict-decision input[type="radio"]{appearance:auto;width:20px!important;min-width:20px!important;max-width:20px!important;height:20px!important;min-height:20px!important;padding:0!important;margin:0!important;justify-self:start;accent-color:#4c745a}
+#sync-dialog .garden-conflict-decision label span{min-width:0;display:grid;gap:3px;justify-items:start;text-align:left}
+.garden-conflict-decision label strong{font-size:.89rem}
+.garden-conflict-decision label small{font-size:.76rem;line-height:1.35}
+.garden-conflict-impact{font-size:.8rem;line-height:1.4;padding:10px}
+#sync-dialog .garden-conflict-ack{display:grid!important;grid-template-columns:20px minmax(0,1fr);align-items:start;justify-content:start!important;gap:10px;margin:0;font-size:.8rem;line-height:1.35}
+#sync-dialog .garden-conflict-ack input[type="checkbox"]{appearance:auto;width:20px!important;min-width:20px!important;max-width:20px!important;height:20px!important;min-height:20px!important;padding:0!important;margin:0!important;accent-color:#4c745a}
+#garden-apply-conflict{width:100%;margin:0}
+.garden-conflict-help{font-size:.76rem;line-height:1.4;border-top:1px solid #e6ded3;padding-top:10px}
+@media(max-width:480px){
+ #sync-dialog:has(#garden-conflict-panel:not([hidden])){width:min(97vw,640px);padding:11px}
+ #sync-dialog .garden-conflict-panel{padding:10px;gap:10px}
+ .garden-diff-item>summary{padding:10px;grid-template-columns:minmax(0,1fr);gap:4px}
+ .garden-diff-toggle{grid-column:1;justify-self:start}
+ .garden-conflict-count{padding:8px}
+}
 </style>
 </head>
 <body>
 <button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><span class="brand-icon">✿</span><div>Service garden<small>SUPERVISION TRACKER</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><button id="manage-archived" class="nav-item">▤ Archived clients</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
 <header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
-<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.4.2">v0.4.2</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 0.4.3">v0.4.3</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
 <div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
 <details class="sync-preview-controls" hidden><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p></p></details><div id="conflict" hidden><p class="error">Sync paused: versions differ. Open the Sync dialog to review changes before choosing.</p></div>
 </div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
@@ -399,7 +451,7 @@ button{touch-action:manipulation}
 </main>
 <dialog id="sync-dialog" aria-label="Private device synchronization">
 <div class="garden-sync-dialog">
-<h2>Private device sync <small class="app-version">v0.4.2</small></h2>
+<h2>Private device sync <small class="app-version">v0.4.3</small></h2>
 <p class="muted" id="garden-pair-intro">Pair this browser with your private key. No email address or password is required. Once paired, changes sync automatically when online.</p>
 <p id="garden-beta-warning" class="garden-beta-warning"><strong>Sync verification underway.</strong> Use only fictional test records until Mac and iPhone pairing, synchronization, and revocation are verified.</p>
 <form id="sync-form" autocomplete="off">
@@ -410,12 +462,12 @@ button{touch-action:manipulation}
 <section id="garden-conflict-panel" hidden aria-label="Review conflicting records">
 <div class="garden-conflict-heading"><span aria-hidden="true">⚠️</span><div><h3>Review changes before syncing</h3><p class="muted">Two versions differ. Nothing has been replaced.</p></div></div>
 <div id="garden-conflict-counts" class="garden-conflict-counts"></div>
-<h4>What changed?</h4><p class="muted">Tap each record below to compare values side by side.</p>
-<div id="garden-conflict-diff" class="garden-conflict-diff"></div>
-<details class="garden-conflict-backups"><summary>Save both versions as backups</summary>
+<h4 id="garden-diff-heading">Review the differences</h4><p class="muted">The first changed record is open. Open any other record to see its details.</p>
+<div id="garden-conflict-diff" class="garden-conflict-diff" aria-labelledby="garden-diff-heading"></div>
+<details class="garden-conflict-backups"><summary>Backups <span class="muted">· Optional, but recommended</span></summary>
 <p class="muted">Save both files if either contains changes you want to preserve.</p>
 <div class="garden-conflict-buttons"><button type="button" id="export-local-conflict">Download device copy</button><button type="button" id="export-cloud-dialog">Download cloud copy</button></div></details>
-<fieldset class="garden-conflict-decision"><legend>Which version should we keep?</legend>
+<fieldset class="garden-conflict-decision"><legend>Choose which version to keep</legend>
 <label><input type="radio" name="garden-conflict-choice" value="local"><span><strong>This device</strong><small>Replace the cloud with this device’s complete copy</small></span></label>
 <label><input type="radio" name="garden-conflict-choice" value="cloud"><span><strong>Cloud</strong><small>Replace this device with the cloud's complete copy</small></span></label>
 </fieldset>
@@ -863,17 +915,30 @@ function gardenDiffRows(local,remote){
  return rows.sort((a,b)=>a.label.localeCompare(b.label));
 }
 function gardenDiffValue(value){return value===undefined||value===null||value===''?'—':typeof value==='boolean'?(value?'Yes':'No'):String(value)}
+let gardenRenderedConflictSignature='';
 function gardenRenderConflict(){
- if(!cloudConflict)return;
- const local=state,remote=cloudConflict.payload,rows=gardenDiffRows(local,remote);
+ if(!cloudConflict){gardenRenderedConflictSignature='';return;}
+ const local=state,remote=cloudConflict.payload;
+ const signature=JSON.stringify([local,remote,cloudConflict.revision]);
+ if(gardenRenderedConflictSignature===signature)return;
+ gardenRenderedConflictSignature=signature;
+ const rows=gardenDiffRows(local,remote);
+ document.querySelectorAll('input[name="garden-conflict-choice"]').forEach(x=>x.checked=false);
+ $('garden-conflict-ack').checked=false;
  const cards=$('garden-conflict-counts'),diff=$('garden-conflict-diff');cards.replaceChildren();diff.replaceChildren();
  for(const [name,data] of [['This device',local],['Cloud',remote]]){
   const box=el('div',undefined,'garden-conflict-count');box.append(el('strong',name),el('span',data.auth.length+' authorizations · '+data.logs.length+' sessions'));cards.append(box);
  }
  if(!rows.length)diff.append(el('p','The records appear identical; the server changed while checking sync.','muted'));
- for(const item of rows){
+ rows.forEach((item,index)=>{
   const details=el('details',undefined,'garden-diff-item'),summary=el('summary');
-  summary.append(el('small',item.kind==='auth'?'Authorization':'Session'),el('strong',item.label),el('span',!item.l?'Cloud only':!item.r?'This device only':'Edited differently'));
+  if(index===0)details.open=true;
+  const eyebrow=el('span',undefined,'garden-diff-eyebrow');
+  eyebrow.append(el('small',item.kind==='auth'?'Authorization':'Session'),el('span',!item.l?'Cloud only':!item.r?'This device only':item.fields.length+' field'+(item.fields.length===1?'':'s')+' changed','garden-diff-tag'));
+  const title=el('strong',item.label,'garden-diff-title');
+  const toggle=el('span',index===0?'Hide details':'View differences','garden-diff-toggle');
+  details.addEventListener('toggle',()=>{toggle.textContent=details.open?'Hide details':'View differences';});
+  summary.append(eyebrow,title,toggle);
   details.append(summary);
   const table=el('table',undefined,'garden-diff-table'),head=table.createTHead().insertRow();
   for(const name of ['Field','This device','Cloud'])head.append(el('th',name));
@@ -881,7 +946,8 @@ function gardenRenderConflict(){
   const fields=item.fields.length?item.fields:[['id','Record']];
   for(const [field,label] of fields){const row=body.insertRow();row.insertCell().textContent=label;row.insertCell().textContent=gardenDiffValue(item.l?.[field]);row.insertCell().textContent=gardenDiffValue(item.r?.[field])}
   details.append(table);diff.append(details);
- }
+ });
+ $('garden-diff-heading').textContent=rows.length+' differing record'+(rows.length===1?'':'s')+' to review';
  gardenUpdateConflictChoice();
 }
 function gardenUpdateConflictChoice(){

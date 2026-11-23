@@ -9,8 +9,8 @@ test('all embedded application scripts parse',()=>{
  for(const [i,block] of blocks.entries())assert.doesNotThrow(()=>new vm.Script(block[1],{filename:'inline-'+i+'.js'}));
 });
 test('single application version',()=>{
- assert.match(html,/<title>Service Garden — v0\.4\.2<\/title>/);
- assert.match(html,/id="app-version"[^>]*>v0\.4\.2/);
+ assert.match(html,/<title>Service Garden — v0\.4\.3<\/title>/);
+ assert.match(html,/id="app-version"[^>]*>v0\.4\.3/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
 test('management controls exist',()=>{
@@ -53,4 +53,19 @@ test('comparison shows real field differences without choosing automatically',()
  assert.match(html,/garden-conflict-ack/);
  assert.match(html,/disabled>Confirm version and resume sync/);
  assert.doesNotMatch(html,/\$\('export-cloud'\)/);
+});
+
+test('conflicting record disclosure defaults open but supports multiple records',()=>{
+ assert.match(html,/if\(index===0\)details\.open=true/);
+ assert.match(html,/View differences/);
+ assert.match(html,/Hide details/);
+ assert.match(html,/gardenRenderedConflictSignature/);
+ assert.match(html,/garden-diff-item/);
+ assert.match(html,/garden-diff-heading/);
+});
+test('mobile conflict controls have compact, fixed-size radios and checkbox',()=>{
+ assert.match(html,/garden-conflict-decision input\[type="radio"\]/);
+ assert.match(html,/width:20px!important/);
+ assert.match(html,/garden-conflict-ack input\[type="checkbox"\]/);
+ assert.match(html,/garden-apply-conflict\{width:100%/);
 });
