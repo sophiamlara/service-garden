@@ -10,8 +10,8 @@ test('all embedded application scripts parse',()=>{
  for(const [i,block] of blocks.entries())assert.doesNotThrow(()=>new vm.Script(block[1],{filename:'inline-'+i+'.js'}));
 });
 test('single application version',()=>{
- assert.match(html,/<title>ABA Track — v1\.0<\/title>/);
- assert.match(html,/id="app-version"[^>]*>v1\.0/);
+ assert.match(html,/<title>ABA Track — v1\.1<\/title>/);
+ assert.match(html,/id="app-version"[^>]*>v1\.1/);
  assert.doesNotMatch(html,/href="\.?\/beta\/|v0\.3 beta/i);
 });
 test('management controls exist',()=>{
@@ -91,9 +91,9 @@ test('Duo portrait and landscape session log cards keep every field and action',
 });
 
 test('stable v1.0 release is consistent across UI',()=>{
- assert.match(html,/<title>ABA Track — v1\.0<\/title>/);
- assert.match(html,/aria-label="Version 1\.0">v1\.0/);
- assert.match(html,/class="app-version">v1\.0/);
+ assert.match(html,/<title>ABA Track — v1\.1<\/title>/);
+ assert.match(html,/aria-label="Version 1\.1">v1\.1/);
+ assert.match(html,/class="app-version">v1\.1/);
  assert.doesNotMatch(html,/v0\.4\.5/);
 });
 
@@ -150,4 +150,31 @@ test('Safari favicon.ico offers three recognized small icon dimensions',()=>{
   const count=ico.readUInt32LE(p+8),offset=ico.readUInt32LE(p+12);
   assert.ok(count>100);assert.ok(offset+count<=ico.length);
  }
+});
+
+test('authorization watch counts exactly one calendar month before end',()=>{
+ const source=html.match(/^function renewalReportDue\(end\)\{[^\n]+\}$/m)?.[0];
+ assert.ok(source,'date helper exists');
+ const due=vm.runInNewContext(source+'\nrenewalReportDue');
+ assert.equal(due('2026-11-30'),'2026-10-30');
+ assert.equal(due('2027-01-31'),'2026-12-31');
+ assert.equal(due('2027-03-31'),'2027-02-28');
+ assert.equal(due('2028-03-31'),'2028-02-29');
+ const daysSource=html.match(/^function renewalDaysBetween\(from,to\)\{[^\n]+\}$/m)?.[0];
+ assert.ok(daysSource,'countdown helper exists');
+ const days=vm.runInNewContext(daysSource+'\nrenewalDaysBetween');
+ assert.equal(days('2026-11-23','2026-11-30'),7);
+ assert.equal(days('2026-11-23','2026-10-30'),-24);
+});
+test('renewal watch can mark reports submitted and synchronize status safely',()=>{
+ for(const id of ['renewal-section','renewal-cards','renewal-summary','renewal-heading'])assert.ok(html.includes('id="'+id+'"'));
+ assert.match(html,/paintRenewalCountdowns\(\);/);
+ assert.match(html,/reportSubmittedOn === undefined \|\| validDate\(a\.reportSubmittedOn\)/);
+ assert.match(html,/\['reportSubmittedOn','Report submitted'\]/);
+ assert.match(html,/if\(submit\)return \{\.\.\.a,reportSubmittedOn:day\(\)\}/);
+ assert.match(html,/const error=await save\(\{\.\.\.state,auth:updated\}/);
+ assert.match(html,/Mark report submitted/);
+ assert.match(html,/one calendar month before the authorization end date/i);
+ assert.match(html,/These reminders appear when you open ABA Track/);
+ assert.equal((html.match(/const storeKey = 'service-garden-v03-beta-safe-v1'/g)||[]).length,1);
 });

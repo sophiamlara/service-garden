@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ABA Track — v1.0</title>
+<title>ABA Track — v1.1</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ABA Track">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -524,12 +524,56 @@ button{touch-action:manipulation}
 /* ABA Track official flower emblem: same raster artwork in header, tabs and installed app. */
 .brand .brand-icon-image{display:block;flex:none;object-fit:cover;background:transparent;padding:0;border-radius:13px;box-shadow:0 3px 0 #dfc98f;image-rendering:auto}
 @media(max-width:1050px){.brand .brand-icon-image{width:40px;height:40px}}
+
+/* ABA Track report deadline watch: clear, mobile-first countdown cards */
+.renewal-section{margin:10px 0 28px;padding:22px;background:#fffdf9;border:1px solid #e7dfd3;border-radius:22px;box-shadow:0 4px 0 #eae4da,0 9px 25px #594a3708}
+.renewal-heading{align-items:end;gap:10px;margin:0 0 9px}
+.renewal-heading .eyebrow{margin:0 0 4px!important}
+.renewal-heading h2{font-size:1.35rem}
+.renewal-summary{font-size:.79rem;font-weight:750;color:#705333;background:#f2e8d9;border-radius:999px;padding:7px 11px;max-width:100%}
+.renewal-intro{font-size:.82rem;line-height:1.5;margin:0 0 18px}
+.renewal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.renewal-card{display:flex;flex-direction:column;gap:12px;min-width:0;padding:17px;border:1px solid #e3dbd1;border-left:5px solid #7c9c88;border-radius:16px;box-shadow:none;background:#fffefa}
+.renewal-card-top{display:flex;align-items:start;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.renewal-card-top h3{margin:0 0 3px;font-size:1.15rem}
+.renewal-card-top small{font-size:.77rem}
+.renewal-pill{font-size:.72rem;font-weight:800;border-radius:999px;padding:6px 9px;background:#e9f1e6;color:#45644e;white-space:nowrap}
+.renewal-services{font-size:.82rem;color:#746b63;line-height:1.4}
+.renewal-date-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:1px}
+.renewal-date{display:grid;align-content:start;gap:5px;background:#f7f3ec;border:1px solid #ebe4da;border-radius:11px;padding:11px;min-width:0}
+.renewal-date-label{font-size:.67rem;line-height:1.35;letter-spacing:.065em;font-weight:800;color:#6c655e}
+.renewal-date strong{font-size:.98rem;line-height:1.35}
+.renewal-date small{font-size:.78rem;line-height:1.4;color:#6d655c}
+.renewal-footer{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:auto;padding-top:12px;border-top:1px solid #eee7dc}
+.renewal-note{font-size:.75rem;line-height:1.5}
+.renewal-footer button{flex:none;min-height:44px;box-shadow:none;font-size:.79rem;padding:9px 11px;max-width:100%}
+.renewal-submit{color:#375e46;border:1px solid #b9cfb8;background:#edf4ea}
+.renewal-undo{color:#6c6357;background:#faf6ef}
+.renewal-overdue,.renewal-expired{border-left-color:#ae5643}
+.renewal-pill-overdue,.renewal-pill-expired{background:#f9e4de;color:#954439}
+.renewal-soon{border-left-color:#bc8628}
+.renewal-pill-soon{background:#f7ebd0;color:#815d22}
+.renewal-approaching{border-left-color:#a28c46}
+.renewal-pill-approaching{background:#f2ebd9;color:#6e5d2a}
+.renewal-submitted{border-left-color:#5d8d61}
+.renewal-pill-submitted{background:#e5f1e4;color:#336442}
+@media(max-width:900px){.renewal-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){
+ .renewal-section{padding:15px;margin:8px 0 24px;border-radius:17px}
+ .renewal-card{padding:14px;gap:11px}
+ .renewal-date-grid{gap:8px}
+ .renewal-date{padding:9px}
+ .renewal-date strong{font-size:.92rem}
+ .renewal-footer{align-items:stretch;flex-direction:column;gap:8px}
+ .renewal-footer button{width:100%}
+}
+@media(max-width:330px){.renewal-date-grid{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <button id="drawer-shade" aria-label="Close client navigation" hidden tabindex="-1"></button><aside id="sidebar"><div class="brand"><img class="brand-icon brand-icon-image" src="./icon-192.png?brand=aba-track-1" width="43" height="43" alt="" aria-hidden="true"><div>ABA Track<small>AUTHORIZATION & HOURS</small></div></div><p class="nav-label">YOUR WORKSPACE</p><button id="overview-nav" class="nav-item">◫ &nbsp; Monthly overview</button><button id="sessions-nav" class="nav-item">≡ &nbsp; Session log</button><div class="line nav-label"><span>CLIENTS · A–Z</span><button id="sidebar-close" aria-label="Close client navigation">×</button></div><nav id="side-clients" aria-label="Clients"></nav><button id="new-client" class="nav-item">＋ Add client / service</button><button id="manage-archived" class="nav-item">▤ Archived clients</button><div class="sidebar-note"><strong>A little clarity, every day.</strong><p>Your clients, time, and balances in one place.</p><small>Private key · sync across devices</small></div></aside>
 <header><div><button id="mobile-menu" aria-expanded="false" aria-controls="sidebar">☰ Clients</button><div class="header-title"><h1 id="page-title">Hello!</h1><p id="page-subtitle">Monthly overview</p></div>
-<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 1.0">v1.0</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
+<details id="header-sync"><summary aria-label="Synchronization status and details"><div id="sync-indicator" data-state="offline"><span class="sync-led" aria-hidden="true"></span><strong id="sync-status" role="status" aria-live="polite">Offline</strong><small id="app-version" class="app-version" aria-label="Version 1.1">v1.1</small><span id="sync-demo-tag" hidden>Demo</span></div><div id="sync-progress" class="sync-progress" role="progressbar" aria-label="Synchronization in progress" hidden><span></span></div></summary><div class="sync-popover">
 <div class="line"><div><p class="muted" id="sync-detail">Cloud sync is not connected.</p></div><div class="actions"><button id="sync-now">Sync now</button><button id="sync-settings">Sync settings</button></div></div>
 <details class="sync-preview-controls" hidden><summary>Preview indicator styles</summary><label>Status example<select id="sync-demo"><option value="">Actual preview status</option><option value="synced">Synced</option><option value="checking">Checking</option><option value="syncing">Syncing</option><option value="error">Sync error</option><option value="conflict">Sync conflict</option><option value="offline">Offline</option></select></label><p></p></details><div id="conflict" hidden><p class="error">Sync paused: versions differ. Open the Sync dialog to review changes before choosing.</p></div>
 </div></details><div class="actions header-actions"><button id="add-auth">+ Authorization</button><button class="primary" id="add-log">+ Log time</button></div></div></header>
@@ -547,6 +591,10 @@ button{touch-action:manipulation}
 
 <section class="overview" id="overview-section"><div class="line overview-title section-head"><h2 id="month-heading">This month</h2><label class="month-picker"><span class="sr-only">View month</span><select id="month"></select></label></div>
 <div class="metrics" id="metrics"></div><p class="muted summary-note">Monthly totals use the selected month. Full-period services have a separate balance.</p></section>
+<section id="renewal-section" class="renewal-section" aria-labelledby="renewal-heading" hidden>
+<div class="line renewal-heading"><div><p class="eyebrow">PLAN AHEAD</p><h2 id="renewal-heading">Authorization countdowns</h2></div><span id="renewal-summary" class="renewal-summary" role="status"></span></div>
+<p class="muted renewal-intro">Report deadlines are calculated one calendar month before the authorization end date. These reminders appear when you open ABA Track.</p>
+<div id="renewal-cards" class="renewal-grid"></div></section>
 <section id="visual-section" class="visual-grid"><article><div class="line"><h3>Monthly allowance</h3><span class="pill">Monthly services</span></div><div id="overall-ring"></div><p class="muted">Full-period authorizations are tracked separately.</p></article><article><h3>Hours by service</h3><p class="muted">Logged against the selected month’s allowance</p><div id="service-bars" class="stats"></div></article></section>
 <section id="client-directory"><div class="line section-head"><div><p class="eyebrow">FAMILIAR FACES, CLEAR BALANCES</p><h2>Your clients</h2></div><div class="actions"><label class="search-label"><span class="sr-only">Search client codes</span><input id="client-search" type="search" placeholder="Find a client…"></label><button id="manage-archived-directory" type="button">Archived</button></div></div><div id="directory-cards" class="cards"></div></section>
 <section id="services-section"><div class="line section-head"><h2>Service balances</h2><select id="filter" aria-label="Filter authorization periods"><option value="all">All periods</option><option value="Active">Active only</option><option value="Upcoming">Upcoming only</option><option value="Ended">Ended only</option></select></div><div hidden id="client-nav" class="actions client-nav" aria-label="Jump to client"></div><div id="cards"></div></section>
@@ -555,7 +603,7 @@ button{touch-action:manipulation}
 </main>
 <dialog id="sync-dialog" aria-label="Private device synchronization">
 <div class="garden-sync-dialog">
-<h2>Private device sync <small class="app-version">v1.0</small></h2>
+<h2>Private device sync <small class="app-version">v1.1</small></h2>
 <p class="muted" id="garden-pair-intro">Pair this browser with your private key. No email address or password is required. Once paired, changes sync automatically when online.</p>
 <p id="garden-beta-warning" class="garden-beta-warning"><strong>Sync verification underway.</strong> Use only fictional test records until Mac and iPhone pairing, synchronization, and revocation are verified.</p>
 <form id="sync-form" autocomplete="off">
@@ -730,6 +778,7 @@ function paintGarden(){
  $('overview-section').hidden=gardenView==='sessions';$('metrics').hidden=!!navClient;$('overview-section').querySelector('.summary-note').hidden=!!navClient;
  $('month-heading').textContent=navClient?'Review month':'This month';
  $('visual-section').hidden=gardenView!=='overview';$('client-directory').hidden=gardenView!=='overview';$('services-section').hidden=gardenView!=='client';$('logs-section').hidden=gardenView==='overview';
+ paintRenewalCountdowns();
  document.querySelectorAll('.client-section').forEach(g=>{g.hidden=g.dataset.client!==navClient;g.style.setProperty('--client',clientColor(g.dataset.client));});
  $('client-nav').hidden=true;
  const active=state.auth.filter(a=>monthly(a)&&coversMonth(a,month));const limit=active.reduce((s,a)=>s+a.hours,0),total=active.reduce((s,a)=>s+used(a.id,month),0);
@@ -1001,7 +1050,7 @@ function updateSyncStatus() {
  gardenSyncPaint('checking','Paired device. Checking its cloud copy.');
 }
 function queueSync(){clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(),850)}
-const gardenDiffFields={auth:[['client','Client'],['service','Service'],['basis','Allowance'],['start','Start date'],['end','End date'],['hours','Hours'],['archived','Archived'],['note','Note']],logs:[['date','Date'],['minutes','Minutes'],['contact','Contact'],['modality','Delivery'],['provider','Provider'],['auth','Authorization ID']]};
+const gardenDiffFields={auth:[['client','Client'],['service','Service'],['basis','Allowance'],['start','Start date'],['end','End date'],['hours','Hours'],['archived','Archived'],['reportSubmittedOn','Report submitted'],['note','Note']],logs:[['date','Date'],['minutes','Minutes'],['contact','Contact'],['modality','Delivery'],['provider','Provider'],['auth','Authorization ID']]};
 function gardenDiffRows(local,remote){
  const rows=[];
  for(const kind of ['auth','logs']){
@@ -1262,6 +1311,78 @@ function upgrade(data) { return {...data,version:7}; }
 const modalityLabels = {'':'Unspecified','in-person':'In person',telehealth:'Telehealth'};
 const periodName = auth => auth.client + ' · ' + serviceName(auth) + ' · ' + dateText(auth.start) + ' – ' + dateText(auth.end);
 const id = () => globalThis.crypto?.randomUUID?.() || Date.now().toString(36) + Math.random().toString(36).slice(2);
+/* Authorization and reporting dates use calendar arithmetic, never 30-day approximations. */
+function renewalReportDue(end){const [y,m,d]=end.split('-').map(Number);const last=new Date(Date.UTC(y,m-1,0)).getUTCDate();return new Date(Date.UTC(y,m-2,Math.min(d,last))).toISOString().slice(0,10);}
+function renewalDaysBetween(from,to){return Math.round((Date.parse(to+'T00:00:00Z')-Date.parse(from+'T00:00:00Z'))/86400000);}
+function renewalCountdown(delta,kind){
+ if(delta===0)return kind==='report'?'Due today':'Ends today';
+ if(delta>0)return delta+' day'+(delta===1?'':'s')+(kind==='report'?' until report due':' until expiration');
+ return Math.abs(delta)+' day'+(delta===-1?'':'s')+(kind==='report'?' overdue':' since expiration');
+}
+function renewalGrouped(today){
+ const grouped=new Map();
+ for(const auth of state.auth){
+  if(auth.archived||renewalDaysBetween(today,auth.end)<-30)continue;
+  const key=JSON.stringify([auth.client,auth.end]);
+  if(!grouped.has(key))grouped.set(key,{client:auth.client,end:auth.end,due:renewalReportDue(auth.end),records:[]});
+  grouped.get(key).records.push(auth);
+ }
+ return [...grouped.values()].sort((a,b)=>{
+  const doneA=a.records.every(x=>x.reportSubmittedOn),doneB=b.records.every(x=>x.reportSubmittedOn);
+  return Number(doneA)-Number(doneB)||a.due.localeCompare(b.due)||a.client.localeCompare(b.client);
+ });
+}
+async function renewalMarkSubmitted(group,submit){
+ const names=[...new Set(group.records.map(a=>serviceName(a)))].join(', ');
+ if(submit&&!confirm('Confirm that you already submitted the report for '+group.client+' (authorization ending '+dateText(group.end)+')? This marks these services: '+names+'.'))return;
+ const ids=new Set(group.records.map(a=>a.id));
+ const updated=state.auth.map(a=>{
+  if(!ids.has(a.id))return a;
+  if(submit)return {...a,reportSubmittedOn:day()};
+  const copy={...a};delete copy.reportSubmittedOn;return copy;
+ });
+ const error=await save({...state,auth:updated},submit?'Report marked submitted.':'Report status returned to pending.');
+ if(error)notice(error);
+}
+function paintRenewalCountdowns(){
+ const section=$('renewal-section');
+ if(gardenView!=='overview'){section.hidden=true;return;}
+ const today=day(),groups=renewalGrouped(today);
+ section.hidden=!groups.length;
+ if(!groups.length)return;
+ const cards=$('renewal-cards');cards.replaceChildren();
+ let urgent=0,upcoming=0;
+ for(const group of groups){
+  const reportDays=renewalDaysBetween(today,group.due),endDays=renewalDaysBetween(today,group.end);
+  const submitted=group.records.every(a=>!!a.reportSubmittedOn);
+  const partial=group.records.some(a=>!!a.reportSubmittedOn)&&!submitted;
+  const tone=submitted?'submitted':endDays<0?'expired':reportDays<=0?'overdue':reportDays<=14?'soon':reportDays<=30?'approaching':'normal';
+  if(!submitted&&reportDays<=0)urgent++;else if(!submitted&&reportDays<=30)upcoming++;
+  const card=el('article',undefined,'renewal-card renewal-'+tone);
+  const heading=el('div',undefined,'renewal-card-top');
+  const title=el('div');title.append(el('h3',group.client),el('small',group.records.length+' authorization'+(group.records.length===1?'':'s')+' ending '+dateText(group.end)));
+  const statusText=submitted?'Report submitted':endDays<0?'Authorization ended':reportDays<0?'Report overdue':reportDays===0?'Report due today':reportDays<=14?'Due very soon':reportDays<=30?'Coming up':'On track';
+  heading.append(title,el('span',statusText,'renewal-pill renewal-pill-'+tone));card.append(heading);
+  const services=el('p',group.records.map(a=>serviceName(a)).filter((v,i,arr)=>arr.indexOf(v)===i).join(' · '),'renewal-services');
+  card.append(services);
+  const dates=el('div',undefined,'renewal-date-grid');
+  for(const [label,iso,delta,kind] of [['REPORT DUE',group.due,reportDays,'report'],['AUTHORIZATION ENDS',group.end,endDays,'end']]){
+   const part=el('div',undefined,'renewal-date');
+   part.append(el('span',label,'renewal-date-label'),el('strong',dateText(iso)));
+   const detail=el('small',renewalCountdown(delta,kind));
+   if(kind==='report'&&submitted){const submittedOn=group.records.map(a=>a.reportSubmittedOn).sort().reverse()[0];detail.textContent='Submitted '+dateText(submittedOn);}
+   part.append(detail);dates.append(part);
+  }
+  card.append(dates);
+  const footer=el('div',undefined,'renewal-footer');
+  const note=el('small',submitted?'Submission recorded. You can undo this if needed.':partial?'Some services are already marked submitted.':'Mark submitted after you send the report.','renewal-note');
+  const action=button(submitted?'Undo submitted':'Mark report submitted',()=>renewalMarkSubmitted(group,!submitted));
+  action.className=submitted?'renewal-undo':'renewal-submit';
+  footer.append(note,action);card.append(footer);cards.append(card);
+ }
+ $('renewal-summary').textContent=urgent?urgent+' report'+(urgent===1?'':'s')+' due or overdue':upcoming?upcoming+' coming up':'All report deadlines on track';
+}
+
 
 function el(tag, content, className) {
   const node = document.createElement(tag);
@@ -1284,7 +1405,7 @@ function valid(data) {
   if (!data || (data.version !== undefined && data.version !== 2 && data.version !== 3 && data.version !== 4 && data.version !== 5 && data.version !== 6 && data.version !== 7) || !Array.isArray(data.auth) || !Array.isArray(data.logs)) return false;
   if (!data.auth.every(a => validId(a) && typeof a.client === 'string' && a.client.trim() && a.client.length <= 30
     && (a.service === undefined || serviceNames.includes(a.service)) && (a.basis === undefined || ['monthly','period'].includes(a.basis))
-    && (a.note === undefined || typeof a.note === 'string') && (a.archived === undefined || typeof a.archived === 'boolean') && validDate(a.start) && validDate(a.end) && a.start <= a.end && Number.isFinite(a.hours) && a.hours >= .02 && a.hours <= 100000)) return false;
+    && (a.note === undefined || typeof a.note === 'string') && (a.archived === undefined || typeof a.archived === 'boolean') && (a.reportSubmittedOn === undefined || validDate(a.reportSubmittedOn)) && validDate(a.start) && validDate(a.end) && a.start <= a.end && Number.isFinite(a.hours) && a.hours >= .02 && a.hours <= 100000)) return false;
   const periods = new Map(data.auth.map(a => [a.id,a]));
   return periods.size === data.auth.length && data.logs.every(l => validId(l) && periods.has(l.auth) && validDate(l.date)
     && (l.contact === undefined || ['', 'direct', 'indirect'].includes(l.contact)) && (l.modality === undefined || Object.hasOwn(modalityLabels,l.modality)) && (l.provider === undefined || typeof l.provider === 'string') && within(l.date,periods.get(l.auth)) && Number.isInteger(l.minutes) && l.minutes >= 1 && l.minutes <= 1440)
